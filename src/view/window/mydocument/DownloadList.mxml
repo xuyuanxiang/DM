@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" title="文件下载"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="640" height="360"
+			   creationComplete="init()" close="close()">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			
+			import assets.Images;
+			
+			import global.Util;
+			
+			import valueObjects.Document;
+			[Bindable]
+			public var currDoc:Document;
+		
+			
+			
+			private var fileData:ByteArray;
+			
+			protected function init():void
+			{
+				if(currDoc != null){
+					Util.log(currDoc,"下载文件");
+					var down:Downloader = new Downloader(currDoc.pathname,currDoc.size);
+					down.doDownload(progressBar,msg);
+					down.completeFunction = function():void{
+						fileData = down.fileData;
+						downloadBtn.enabled = true;
+					};
+				}
+			}
+			
+			protected function progressBar_creationCompleteHandler(event:FlexEvent):void
+			{
+				progressBar.setProgress(0, 100);
+				progressBar.label = "正在下载...";
+			}
+			
+			protected function downloadBtn_clickHandler(event:MouseEvent):void
+			{
+				var fileRef:FileReference = new FileReference();
+				fileRef.addEventListener(ProgressEvent.PROGRESS,
+					function(pe:ProgressEvent):void{
+						var percent:int = int(pe.bytesLoaded / pe.bytesTotal * 100);
+						progressBar.setProgress(percent,100);
+						progressBar.label = percent + "%，正在取回本地..." ;
+						msg.text = "当前 " + pe.bytesLoaded + " 字节 ，共" + pe.bytesTotal + " 字节。";
+						if(percent == 100)
+							progressBar.label = "完成";
+					}
+				);
+				fileRef.save(fileData,currDoc.alias);
+			}
+			
+			protected function close():void
+			{
+				Util.removePop(this);				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" verticalAlign="middle" horizontalAlign="center">
+		<s:HGroup width="100%" height="10%">
+			<mx:VRule height="100%"/>
+			<mx:LinkButton width="52" height="100%" labelPlacement="bottom" icon="{Images.save_toolbar}" enabled="false" label="取回" toolTip="取回本地" id="downloadBtn" click="downloadBtn_clickHandler(event)"/>
+			<mx:VRule height="100%"/>
+		</s:HGroup>
+		<s:VGroup width="100%" height="70%" horizontalAlign="center" verticalAlign="middle">
+			<s:Form width="100%" height="100%">
+				<s:FormItem width="80" label="文件名：">
+					<s:Label text="{currDoc.alias}" width="100%"/>
+				</s:FormItem>
+				<s:FormItem width="80" label="大小：">
+					<s:Label id="msg" width="100%" text="{currDoc.size} 字节"/>
+				</s:FormItem>
+				<s:FormItem width="80" label="下载进度：">
+					<mx:ProgressBar  id="progressBar" width="100%"  height="24"
+									 creationComplete="progressBar_creationCompleteHandler(event)"
+									 labelPlacement="center" maximum="100" minimum="0"
+									 mode="manual" paddingLeft="5" paddingRight="5"
+									 textAlign="left" verticalCenter="true"/>
+				</s:FormItem>
+			</s:Form>
+		</s:VGroup>
+		<s:HGroup width="90%" height="10%" horizontalAlign="right" verticalAlign="middle">
+			<s:Button icon="{Images.cancle_button}" label="关闭" id="cancleBtn" click="close()"/>
+		</s:HGroup> 
+	</s:VGroup>
+	
+</s:TitleWindow>

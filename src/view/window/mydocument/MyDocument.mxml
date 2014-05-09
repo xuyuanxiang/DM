@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window:BaseWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:window="view.window.*"
+				   x="180" y="10" width="800" height="540" 
+				   layout="absolute" title="文档管理"
+				   enableConfigBtn="true" 
+				   enableOpenBtn="true"
+				   enableDownloadBtn="true"
+				   enableShareBtn="true"
+				   enableDeleteBtn="true"
+				   enableBackBtn="true"
+				   enablePrintBtn="true"
+				   showCurrentPath="true"
+				   enableCreateBtn="true"
+				   enableUploadBtn="true"
+				   enableSearchBtn="true"
+				   enableUpdateBtn="true"
+				   enableRecoverBtn="false">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.states.OverrideBase;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import services.DocumentController;
+			import services.OperationController;
+			import services.PrivilegeController;
+			import services.RootController;
+			
+			import valueObjects.Document;
+			import valueObjects.Page;
+			import valueObjects.Privilege;
+			import valueObjects.Root;
+			import valueObjects.User;
+			
+			override protected function init():void{
+				getPage(1,15);
+				Constant.folderPath = Constant.root.absolutePath;
+			}
+			
+			
+			override protected function getPage(_pageNo:Number,_pageSize:Number):void{
+				var documentController:DocumentController = new DocumentController();
+				documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+				documentController.addEventListener(ResultEvent.RESULT,
+					function(event:ResultEvent):void{
+						Constant.removeLoading();
+						assignment(event.result as Page);
+					}
+				);
+				Constant.addLoading(this.parent);
+				if(Constant.folder == null || Constant.folder.id == null){
+					documentController.findTopLevelDocumentsByRoot(Constant.root.id,_pageNo,_pageSize);
+				} else if (searchKeyWordsInput.text != null && searchKeyWordsInput.text.length>0){
+					documentController.findDocumentsByName(searchKeyWordsInput.text,_pageNo,_pageSize);
+				} else {
+					documentController.getChildren(Constant.folder.id,_pageNo,_pageSize);
+				}
+			}
+			
+			override protected function back():void{
+				if(Constant.folder == null){
+					Constant.root = null;
+					selectedIndex = 0;
+				} else {
+					Constant.folder = Constant.folder == null ? null : Constant.folder.parent;
+					if( Constant.folder == null ){
+						Constant.folderPath = Constant.root.absolutePath;
+					} else {
+						Constant.folderPath = Constant.folder.pathname.replace(Constant.folder.id,Constant.folder.alias);
+					}
+					getPage(1,15);
+				}
+			}
+			
+			override protected function create():void{
+				if(Constant.root != null && Constant.root.enabled){
+					var create:CreateFolder = new CreateFolder();
+					create.refreshFunction = function():void{
+						searchKeyWordsInput.text = "";
+						getPage(pageNo,pageSize);
+					};
+					Util.addPop(create,this.parent);
+				} else {
+					Alert.show("当前硬盘已禁止新建！");
+				}
+			}
+			
+			override protected function upload():void{
+				if(Constant.root != null && Constant.root.enabled){
+					var upload:UploadList = new UploadList();
+					upload.refreshFunction = function():void{
+						searchKeyWordsInput.text = "";
+						getPage(pageNo,pageSize);
+					};
+					Util.addPop(upload,this.parent);
+				} else {
+					Alert.show("当前硬盘已禁止上传！");
+				}
+			}
+			
+			override protected function open(document:Document):void{
+				securityAuth("打开",document,
+					function():void{
+						var document:Document = documentDG.selectedItem as Document;
+						if (document.type == "文件夹"){
+							Util.log(document,"打开文件夹");
+							Constant.folder = document;
+							var parent:Document = document.parent;
+							var folderPath:String = document.pathname.replace(document.id,document.alias);
+							while(parent != null){
+								folderPath = folderPath.replace(parent.id,parent.alias);
+								parent = parent.parent;
+							}
+							Constant.folderPath = folderPath;
+							searchKeyWordsInput.text = "";
+							getPage(1,15);
+						} else {
+							previewDocument(document);
+						}
+					}
+				);
+			}
+			
+			protected function previewDocument(document:Document,isPrint:Boolean=false):void{
+				Constant.addLoading(this.parent);
+				var documentController:DocumentController = new DocumentController();
+				documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+				documentController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						var rtn:String = e.result as String;
+						if( rtn!=null && rtn.indexOf("/")>=0 ){
+							var preview:PreviewDocument = new PreviewDocument();
+							preview.swfPath = rtn;
+							preview.isPrint = isPrint;
+							preview.currDoc = document;
+							Util.openWindow(preview);
+						} else {
+							Alert.show(rtn);
+						}
+					}
+				);
+				documentController.preview(document.id);
+			}
+			
+			override protected function download(document:Document):void{
+				securityAuth("下载",document,
+					function():void{
+						if(document.type == "文件夹"){
+							Alert.show("对不起！当前版本还不支持文件夹下载！");
+						} else {
+							var down:DownloadList = new DownloadList();
+							down.currDoc = document;
+							Util.addPop(down,myViewStack.parent.parent);
+						}
+					}
+				);
+			}
+			
+			override protected function print(document:Document):void{
+				securityAuth("打印",document,
+					function():void{
+						if(document.type == "文件夹"){
+							Alert.show("对不起！无法打印文件夹！");
+						} else {
+							previewDocument(document,true);
+						}
+					}
+				);
+			}
+			
+			override protected function remove(document:Document):void{
+				securityAuth("删除",document,
+					function():void{
+						Alert.show("您确定要将"+document.alias +"放入回收站吗？","提示",Alert.YES|Alert.NO,null,
+							function(e:CloseEvent):void{
+								if(e.detail == 1){
+									removeToRecycle(document);
+								}
+							}
+						);
+					}
+				);
+			}
+			
+			protected function removeToRecycle(document:Document):void{
+				var controller:DocumentController = new DocumentController();
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						var doc:Document = e.result as Document;
+						Util.log(doc,"删除文件");
+						getPage(pageNo,pageSize);
+					}
+				);
+				controller.disableDocument(document.id);
+			}
+	
+			override protected function config(document:Document):void{
+				securityAuth("设置",document,
+					function():void{
+						var attribute:DocumentAttribute = new DocumentAttribute();
+						attribute.currDoc = document;
+						attribute.refreshFunction = function():void{getPage(pageNo,pageSize);};
+						Util.addPop(attribute,myViewStack.parent);
+					}
+				);
+			}
+			
+			override protected function update(document:Document):void{
+				securityAuth("修订",document,
+					function():void{
+						if(document.type == "文件夹"){
+							Alert.show("对不起！无法修订文件夹！");
+						} else {
+							var edit:EditDocument = new EditDocument();
+							edit.currDoc = document;
+							edit.refreshFunction = function():void{getPage(pageNo,pageSize)};
+							Util.addPop(edit,myViewStack.parent);
+						}
+					}
+				);
+			}
+			
+			override protected function search(name:String):void{
+				var controller:DocumentController = new DocumentController();
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						assignment(e.result as Page);
+					}
+				);
+				controller.findDocumentsByName(name,1,15);
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</window:BaseWindow>

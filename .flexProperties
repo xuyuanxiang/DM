@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexProperties enableServiceManager="false" flexServerFeatures="4" flexServerType="2" fmlDataModelLocation=".model/DM.fml" serverContextRoot="/dm" serverRoot="D:/apache-tomcat-6.0.39/webapps/dm" serverRootURL="http://localhost/dm" toolCompile="true" useServerFlexSDK="false" version="2"/>

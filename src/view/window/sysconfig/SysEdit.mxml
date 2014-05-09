@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="480" height="280" close="close()" title="编辑" creationComplete="init()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import global.Constant;
+			
+			import services.RootController;
+			
+			import valueObjects.Root;
+			
+			[Bindable]
+			public var currRoot:Root = new Root();
+			
+			public var refreshFunction:Function;
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{
+				if( validPath.validate().results == null && validName.validate().results == null
+						&& msgName.text.length == 0 && msgPath.text.length == 0){
+					Constant.addLoading(this);
+					var rootController:RootController = new RootController();
+					rootController.addEventListener(ResultEvent.RESULT,
+						function(e:ResultEvent):void{
+							Constant.removeLoading();
+							var root:Root = e.result as Root;
+							if(root == null) {
+								Alert.show("创建失败！服务器不存在该路径！");
+							} else {
+								refreshFunction.call();
+								close();
+							}
+						}
+					);
+					rootController.addEventListener(FaultEvent.FAULT,faultHandler);
+					if(currRoot == null)
+						currRoot = new Root();
+					currRoot.absolutePath = inputPath.text;
+					currRoot.name = inputName.text;
+					currRoot.hidden = inputHidden.selectedValue;
+					rootController.save(currRoot);
+				}
+			}
+			
+			protected function close():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function init():void
+			{
+				inputHidden.selectedValue  = currRoot.hidden;
+				if( currRoot.absolutePath != null && currRoot.absolutePath.length > 0 ){
+					inputPath.text = currRoot.absolutePath;
+				}
+				if( currRoot.name != null && currRoot.name.length > 0 ){
+					inputName.text = currRoot.name;
+				}
+			}
+			
+			protected function validPath_validHandler(event:ValidationResultEvent):void
+			{
+				var controller:RootController = new RootController();
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						var rtn:Boolean = e.result as Boolean;
+						if(rtn){
+							msgPath.text = "绝对路径已存在！";
+						} else {
+							msgPath.text = "";
+						}
+					}
+				);
+				controller.existPath(inputPath.text,currRoot.id);
+			}
+			
+			protected function validName_validHandler(event:ValidationResultEvent):void
+			{
+				var controller:RootController = new RootController();
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						var rtn:Boolean = e.result as Boolean;
+						if(rtn){
+							msgName.text = "显示名称已存在！";
+						} else {
+							msgName.text = "";
+						}
+					}
+				);
+				controller.existName(inputName.text,currRoot.id);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:StringValidator id="validPath" property="text" required="true"
+							requiredFieldError="绝对路径不能为空！" source="{inputPath}" 
+							valid="validPath_validHandler(event)" />
+		<mx:StringValidator id="validName" property="text" required="true"
+							requiredFieldError="显示名称不能为空！" source="{inputName}" 
+							valid="validName_validHandler(event)" />
+		
+		<s:RadioButtonGroup id="inputHidden">
+		</s:RadioButtonGroup>
+	</fx:Declarations>
+	<s:Form width="100%" height="100%">
+		<s:HGroup width="100%" horizontalAlign="center">
+			<s:Label id="msgName" color="red"/>
+			<s:Label id="msgPath" color="red"/>
+		</s:HGroup>
+		<s:FormItem width="80" label="显示名称：">
+			<s:TextInput id="inputName" width="200"/>
+		</s:FormItem>
+		<s:FormItem width="80" label="绝对路径：">
+			<s:TextInput id="inputPath" width="200" />
+		</s:FormItem>
+		<s:FormItem width="80" >
+			<s:HGroup width="200" horizontalAlign="center" verticalAlign="middle">
+				<s:RadioButton label="隐藏" group="{inputHidden}" name="hidden" value="true"/>
+				<s:RadioButton label="显示" group="{inputHidden}" name="hidden" value="false" />
+			</s:HGroup>
+		</s:FormItem>
+		<s:FormItem width="80">
+			<s:HGroup width="200" horizontalAlign="right">
+				<s:Button id="submitBtn" icon="{Images.submit_button}" label="保存" click="submitBtn_clickHandler(event)"/>
+				<s:Button id="cancleBtn" icon="{Images.cancle_button}" label="取消" click="close()"/>
+			</s:HGroup>
+		</s:FormItem>
+	</s:Form>
+</s:TitleWindow>

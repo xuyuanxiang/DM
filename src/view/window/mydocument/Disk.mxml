@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:LinkButton xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" icon="{Images.disk_icon}" labelPlacement="bottom"
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="128" height="128" label="{currRoot.name}" doubleClick="linkbutton1_doubleClickHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import assets.Images;
+			
+			import global.Constant;
+			
+			import valueObjects.Root;
+			
+			[Bindable]
+			public var currRoot:Root;
+			public var itemDoubleClick:Function;
+			
+			
+			protected function linkbutton1_doubleClickHandler(event:MouseEvent):void
+			{
+				Constant.root = currRoot;
+				Constant.folder = null;
+				Constant.folderPath = null;
+				itemDoubleClick.call();
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</mx:LinkButton>

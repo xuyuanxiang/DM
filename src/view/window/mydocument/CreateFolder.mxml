@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" title="新建文件夹"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="420" height="180"
+			   creationComplete="init()" close="close()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import global.Util;
+			
+			import services.DocumentController;
+			import services.UserController;
+			
+			import valueObjects.Document;
+			[Bindable]
+			public var currFolder:Document = new Document();
+			
+			public var refreshFunction:Function;
+			
+			protected function init():void
+			{
+				if(currFolder.alias != null && currFolder.alias.length > 0){
+					inputName.text = currFolder.alias;
+				}
+			}
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{
+				if(validName.validate().results == null && 
+					(msgLbl.text == null || msgLbl.text.length <= 0 )){
+					Constant.addLoading(this);
+					var documentController:DocumentController = new DocumentController();
+					documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+					documentController.addEventListener(ResultEvent.RESULT,
+						function(e:ResultEvent):void{
+							Constant.removeLoading();
+							var doc:Document = e.result as Document;
+							if(doc != null){
+								Util.log(doc,"新建文件夹");
+							}
+							refreshFunction.call();
+							close();
+						}
+					);
+					documentController.createFolder(Constant.folder == null? null:Constant.folder.id,Constant.user.id,inputName.text);
+				}
+			}
+			
+			protected function close():void
+			{
+				Util.removePop(this);
+			}
+			
+			protected function validName_validHandler(event:ValidationResultEvent):void
+			{
+				existName();
+//				isBeyondMaxPath();
+			}
+			
+//			protected function isBeyondMaxPath():void{
+//				var documentController:DocumentController = new DocumentController();
+//				documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+//				documentController.addEventListener(ResultEvent.RESULT,
+//					function(e:ResultEvent):void{
+//						if(e.result){
+//							msgLbl2.text = "无法在当前路径下新建文件夹，路径长度已超过Windows系统最大路径长度！";
+//						} else {
+//							msgLbl2.text = "";
+//						}
+//					}
+//				);
+//				documentController.isBeyondMaxPath(Constant.folder.id,inputName.text);
+//			}
+			
+			protected function existName():void{
+				var documentController:DocumentController = new DocumentController();
+				documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+				documentController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						if(e.result){
+							msgLbl.text = "当前路径下已存在同名文件夹！";
+						} else {
+							msgLbl.text = "";
+						}
+					}
+				);
+				documentController.existName(Constant.folder==null?'':Constant.folder.id,inputName.text);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:StringValidator id="validName" source="{inputName}" property="text" 
+							required="true" requiredFieldError="名称不能为空！" 
+							maxLength="255" tooLongError="名称长度不能超过255个字符。"
+							valid="validName_validHandler(event)"/>
+	</fx:Declarations>
+	<s:Form width="100%" height="100%">
+		<s:HGroup width="100%" horizontalAlign="center">
+			<s:Label id="msgLbl" color="red"/>
+			<s:Label id="msgLbl2" color="red"/>
+		</s:HGroup>
+		<s:FormItem width="80" label="名称：">
+			<s:TextInput id="inputName" width="200" />
+		</s:FormItem>
+		<s:FormItem width="80">
+			<s:HGroup width="200" horizontalAlign="right">
+				<s:Button id="submitBtn" icon="{Images.submit_button}" label="确定" width="80" click="submitBtn_clickHandler(event)"/>
+				<s:Button id="cancleBtn" icon="{Images.cancle_button}" label="取消" width="80" click="close()"/>
+			</s:HGroup>
+		</s:FormItem>
+	</s:Form>
+</s:TitleWindow>

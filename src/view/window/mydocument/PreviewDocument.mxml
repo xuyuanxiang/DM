@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns:MDIWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			  xmlns:s="library://ns.adobe.com/flex/spark"
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  xmlns:ns="http://code.google.com/p/flexlib/"
+			  xmlns:fp="com.devaldi.controls.flexpaper.*"
+			  width="768" height="480" layout="absolute"
+			  x="120" y="50"
+			  draggable="true" title="{currDoc == null? '在线预览' : currDoc.alias}"
+			  creationComplete="init(event)">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import services.OperationController;
+			
+			import valueObjects.Document;
+			[Bindable]
+			public var currDoc:Document;
+			[Bindable]
+			public var printable:Boolean;
+			[Bindable]
+			public var readOnly:Boolean;
+			[Bindable]
+			public var swfPath:String;
+			
+			[Bindable]
+			public var isPrint:Boolean
+			
+			protected function init(event:FlexEvent):void
+			{
+				if(isPrint){
+					Util.log(currDoc,"打印文件");
+					flexPaper.printPaper(event);
+				} else {
+					Util.log(currDoc,"浏览文件");
+					if(  Constant.user.id == currDoc.owner.id ){
+						readOnly = true;
+						printable = false;
+					} else {
+//						securityAuth("打印",currDoc,function():void{printable = true});
+//						securityAuth("复制",currDoc,function():void{readOnly = true});
+					}
+				}
+			}
+			
+			
+			protected function securityAuth(operationName:String,document:Document,execute:Function):void{
+				var operationController:OperationController = new OperationController();
+				operationController.addEventListener(FaultEvent.FAULT,faultHandler);
+				operationController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						var rtn:Boolean = e.result as Boolean;
+						if(rtn){
+							execute.call();
+						} else {
+							Alert.show("对不起！您没有权限"+operationName + document.alias + " 。\n请向其所有者申请！");
+						}
+					}
+				);
+				operationController.hasOperation(document.id,Constant.user.id,operationName);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<fp:FlexPaperViewer id="flexPaper" width="100%" height="95%"
+							ReadOnly="{readOnly}" Scale="1.0" Printable="{printable}"
+							SwfFile="{swfPath}" FitPageOnLoad="true" FitWidthOnLoad="true" >
+		</fp:FlexPaperViewer>
+		<s:HGroup width="95%" height="5%" horizontalAlign="right">
+			<s:Button id="cancleBtn" icon="{Images.cancle_button}" label="关闭" click="this.close()"/>
+		</s:HGroup>
+	</s:VGroup>
+</ns:MDIWindow>

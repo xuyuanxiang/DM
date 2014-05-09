@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+						  xmlns:s="library://ns.adobe.com/flex/spark"
+						  xmlns:mx="library://ns.adobe.com/flex/mx"
+						  focusEnabled="true">
+	<fx:Script source="../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.ProgressBar;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import myevent.MyEvent;
+			
+			import services.DocumentController;
+			
+			import valueObjects.Document;
+			
+			import view.window.mydocument.Uploader;
+			
+			[Bindable]
+			private var currDoc:Document;
+			
+			
+			private function initProgressBar(event: Event): void
+			{
+				pb.label = "准备上传";
+				pb.setProgress(0, 100);
+				var f: FileReference = data as FileReference;
+				f.addEventListener(ProgressEvent.PROGRESS,
+					function(event: ProgressEvent): void
+					{
+						pb.setProgress(event.bytesLoaded, event.bytesTotal);
+						pb.label = "正在加载本地文件...";
+						removeBtn.enabled = false;
+					}
+				);
+				f.addEventListener(Event.COMPLETE,
+					function():void{
+						if(f.data == null){
+							pb.label = "上传失败，所选文件为空！"
+							return; 
+						}
+						pb.label = "正在上传至服务器...";
+						removeBtn.visible = false;
+						continueBtn.visible = true;
+						var controller:DocumentController = new DocumentController();
+						controller.addEventListener(FaultEvent.FAULT,faultHandler);
+						controller.addEventListener(ResultEvent.RESULT,
+							function(resultEvent:ResultEvent):void{
+								currDoc = resultEvent.result as Document;
+								var upload:Uploader = new Uploader(f,currDoc.pathname);
+								upload.doUpload(pb , 
+									function():void{
+										pb.label = "上传成功";
+										continueBtn.visible = false;
+										var documentController:DocumentController = new DocumentController();
+										documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+										documentController.addEventListener(ResultEvent.RESULT,
+											function(resultEvent:ResultEvent):void{
+												currDoc = resultEvent.result as Document;
+												var e:MyEvent = new MyEvent(MyEvent.CONTINUE_UPLOAD_NEXT);
+												dispatchEvent(e);
+											}
+										);
+										documentController.enableDocument(currDoc.id);
+									}
+								);
+							}
+						);
+						if( currDoc == null || currDoc.alias != f.name ){
+							currDoc = new Document();
+							currDoc.root = Constant.root;
+							currDoc.parent = Constant.folder;
+							currDoc.owner = Constant.user;
+							currDoc.alias = f.name;
+							currDoc.created = f.creationDate;
+							currDoc.size = f.size;
+							currDoc.type = f.type.replace(".","");
+							if(currDoc.size > 0 && currDoc.type.length > 0)
+								controller.createDocument(currDoc);
+						}
+					}
+				);
+			}
+			
+			protected function continueBtn_clickHandler(event:MouseEvent):void
+			{
+				var f: FileReference = data as FileReference;
+				var upload:Uploader = new Uploader(f,currDoc.pathname);
+				upload.doUpload(pb , 
+					function():void{
+						pb.label = "上传成功";
+						continueBtn.visible = false;
+						var documentController:DocumentController = new DocumentController();
+						documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+						documentController.addEventListener(ResultEvent.RESULT,
+							function(resultEvent:ResultEvent):void{
+								currDoc = resultEvent.result as Document;
+								var e:MyEvent = new MyEvent(MyEvent.CONTINUE_UPLOAD_NEXT);
+								dispatchEvent(e);
+							}
+						);
+						documentController.enableDocument(currDoc.id);
+					}
+				); 											
+			}
+			
+			protected function removeBtn_clickHandler(event:MouseEvent):void
+			{
+				var f: FileReference = data as FileReference;
+				f.cancel();
+				var e:MyEvent = new MyEvent(MyEvent.REMOVE_UPLOAD_FILE_ITEM);
+				e.setData(f);
+				dispatchEvent(e);								
+			}
+		]]>
+	</fx:Script>
+	<s:HGroup fontWeight="normal">
+		<mx:ProgressBar id="pb" width="100%" creationComplete="initProgressBar(event)"
+						labelPlacement="center" maximum="100" minimum="0" mode="manual"
+						paddingLeft="5" paddingRight="5" textAlign="left" verticalCenter="true"/>
+		<mx:Button id="continueBtn" visible="false" label="断点续传"
+				   click="continueBtn_clickHandler(event)" toolTip="如发现进度条停止，请猛击！"/>
+		<mx:Button id="removeBtn" label="移出队列" click="removeBtn_clickHandler(event)"/>
+	</s:HGroup>
+</s:MXDataGridItemRenderer>

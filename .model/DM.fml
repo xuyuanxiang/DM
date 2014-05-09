@@ -1,0 +1,1719 @@
+
+<model xmlns="http://ns.adobe.com/Fiber/1.0">
+  <annotation name="ActionScriptGeneration">
+    <item name="FullyQualifyReferences">true</item>
+  </annotation>
+  <entity name="DocumentDao">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">DocumentDao</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.dao.DocumentDao</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="sessionFactory" type="SessionFactory"/>
+    <property name="session" type="Session"/>
+    <property name="all" type="opaque[]"/>
+    <property name="allDistinct" type="opaque[]"/>
+  </entity>
+  <entity name="TypeHelper">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">TypeHelper</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.TypeHelper</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+  </entity>
+  <entity name="Interceptor">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Interceptor</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.Interceptor</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+  </entity>
+  <entity name="Statistics">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Statistics</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.stat.Statistics</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="naturalIdCacheHitCount" type="long"/>
+    <property name="updateTimestampsCacheMissCount" type="long"/>
+    <property name="secondLevelCacheMissCount" type="long"/>
+    <property name="entityLoadCount" type="long"/>
+    <property name="secondLevelCacheHitCount" type="long"/>
+    <property name="secondLevelCachePutCount" type="long"/>
+    <property name="collectionRecreateCount" type="long"/>
+    <property name="queryCacheHitCount" type="long"/>
+    <property name="startTime" type="long"/>
+    <property name="updateTimestampsCacheHitCount" type="long"/>
+    <property name="sessionOpenCount" type="long"/>
+    <property name="statisticsEnabled" type="boolean"/>
+    <property name="entityFetchCount" type="long"/>
+    <property name="naturalIdQueryExecutionCount" type="long"/>
+    <property name="connectCount" type="long"/>
+    <property name="sessionCloseCount" type="long"/>
+    <property name="naturalIdCachePutCount" type="long"/>
+    <property name="collectionFetchCount" type="long"/>
+    <property name="queryExecutionMaxTime" type="long"/>
+    <property name="queryCacheMissCount" type="long"/>
+    <property name="entityInsertCount" type="long"/>
+    <property name="collectionLoadCount" type="long"/>
+    <property name="naturalIdCacheMissCount" type="long"/>
+    <property name="entityUpdateCount" type="long"/>
+    <property name="naturalIdQueryExecutionMaxTimeRegion" type="string"/>
+    <property name="queryExecutionMaxTimeQueryString" type="string"/>
+    <property name="transactionCount" type="long"/>
+    <property name="queryCachePutCount" type="long"/>
+    <property name="naturalIdQueryExecutionMaxTime" type="long"/>
+    <property name="closeStatementCount" type="long"/>
+    <property name="queryExecutionCount" type="long"/>
+    <property name="optimisticFailureCount" type="long"/>
+    <property name="entityDeleteCount" type="long"/>
+    <property name="collectionUpdateCount" type="long"/>
+    <property name="flushCount" type="long"/>
+    <property name="prepareStatementCount" type="long"/>
+    <property name="updateTimestampsCachePutCount" type="long"/>
+    <property name="queries" type="string[]"/>
+    <property name="collectionRemoveCount" type="long"/>
+    <property name="successfulTransactionCount" type="long"/>
+    <property name="collectionRoleNames" type="string[]"/>
+    <property name="secondLevelCacheRegionNames" type="string[]"/>
+    <property name="entityNames" type="string[]"/>
+  </entity>
+  <entity name="SessionFactoryOptions">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">SessionFactoryOptions</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.SessionFactory.SessionFactoryOptions</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="interceptor" type="Interceptor"/>
+    <property name="entityNotFoundDelegate" type="EntityNotFoundDelegate"/>
+  </entity>
+  <entity name="EntityNotFoundDelegate">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">EntityNotFoundDelegate</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.proxy.EntityNotFoundDelegate</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+  </entity>
+  <entity name="Session">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Session</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.Session</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="flushMode" type="string"/>
+    <property name="defaultReadOnly" type="boolean"/>
+    <property name="open" type="boolean"/>
+    <property name="sessionFactory" type="SessionFactory"/>
+    <property name="lobHelper" type="LobHelper"/>
+    <property name="connected" type="boolean"/>
+    <property name="dirty" type="boolean"/>
+    <property name="typeHelper" type="TypeHelper"/>
+    <property name="cacheMode" type="string"/>
+    <property name="statistics" type="SessionStatistics"/>
+  </entity>
+  <entity name="SessionFactory">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">SessionFactory</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.SessionFactory</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="sessionFactoryOptions" type="SessionFactoryOptions"/>
+    <property name="allClassMetadata" type="opaque"/>
+    <property name="cache" type="Cache"/>
+    <property name="currentSession" type="Session"/>
+    <property name="closed" type="boolean"/>
+    <property name="definedFilterNames" type="opaque[]"/>
+    <property name="typeHelper" type="TypeHelper"/>
+    <property name="statistics" type="Statistics"/>
+    <property name="allCollectionMetadata" type="opaque"/>
+  </entity>
+  <entity name="Cache">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Cache</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.Cache</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+  </entity>
+  <entity name="VersionDao">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">VersionDao</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.dao.VersionDao</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="sessionFactory" type="SessionFactory"/>
+    <property name="session" type="Session"/>
+    <property name="allDistinct" type="opaque[]"/>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="SessionStatistics">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">SessionStatistics</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.stat.SessionStatistics</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="collectionCount" type="integer"/>
+    <property name="collectionKeys" type="opaque[]"/>
+    <property name="entityKeys" type="opaque[]"/>
+    <property name="entityCount" type="integer"/>
+  </entity>
+  <entity name="LobHelper">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">LobHelper</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">org.hibernate.LobHelper</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group"/>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+  </entity>
+  <service name="UserController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">userController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="LINKED_FILE"></item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setUserManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">UserManager</item>
+      </annotation>
+      <parameter name="arg0" type="UserManager"/>
+    </function>
+    <function name="getByUsername" return-type="User">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">User</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="validPassword" return-type="string">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">string</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="validUsername" return-type="string">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">string</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+  </service>
+  <service name="LogController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">logController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setUserManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">UserManager</item>
+      </annotation>
+      <parameter name="arg0" type="UserManager"/>
+    </function>
+    <function name="setLogManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">LogManager</item>
+      </annotation>
+      <parameter name="arg0" type="LogManager"/>
+    </function>
+    <function name="setDocumentManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">DocumentManager</item>
+      </annotation>
+      <parameter name="arg0" type="DocumentManager"/>
+    </function>
+    <function name="getLogsByDocument" return-type="Page">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,integer,integer</item>
+        <item name="returnType">Page</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="integer"/>
+      <parameter name="arg2" type="integer"/>
+    </function>
+    <function name="save" return-type="Log">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Log</item>
+        <item name="returnType">Log</item>
+      </annotation>
+      <parameter name="arg0" type="Log"/>
+    </function>
+    <function name="addLog" return-type="Log">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string,string</item>
+        <item name="returnType">Log</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+      <parameter name="arg2" type="string"/>
+    </function>
+  </service>
+  <entity name="Log">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Log</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Log</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="document" type="Document"/>
+    <property name="details" type="string"/>
+    <property name="created" type="date"/>
+    <property name="user" type="User"/>
+  </entity>
+  <entity name="LogManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">LogManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.LogManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <service name="DocumentController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">documentController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setRootManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">RootManager</item>
+      </annotation>
+      <parameter name="arg0" type="RootManager"/>
+    </function>
+    <function name="getRecycleDocuments" return-type="Page">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">integer,integer</item>
+        <item name="returnType">Page</item>
+      </annotation>
+      <parameter name="arg0" type="integer"/>
+      <parameter name="arg1" type="integer"/>
+    </function>
+    <function name="enableDocument" return-type="Document">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Document</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="updateDocument" return-type="Document">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,Version</item>
+        <item name="returnType">Document</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="Version"/>
+    </function>
+    <function name="createDocument" return-type="Document">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Document</item>
+        <item name="returnType">Document</item>
+      </annotation>
+      <parameter name="arg0" type="Document"/>
+    </function>
+    <function name="findTopLevelDocumentsByRoot" return-type="Page">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,integer,integer</item>
+        <item name="returnType">Page</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="integer"/>
+      <parameter name="arg2" type="integer"/>
+    </function>
+    <function name="existName" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="setDocumentManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">DocumentManager</item>
+      </annotation>
+      <parameter name="arg0" type="DocumentManager"/>
+    </function>
+    <function name="preview" return-type="string">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">string</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="createFolder" return-type="Document">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string,string</item>
+        <item name="returnType">Document</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+      <parameter name="arg2" type="string"/>
+    </function>
+    <function name="getChildren" return-type="Page">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,integer,integer</item>
+        <item name="returnType">Page</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="integer"/>
+      <parameter name="arg2" type="integer"/>
+    </function>
+    <function name="setUserManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">UserManager</item>
+      </annotation>
+      <parameter name="arg0" type="UserManager"/>
+    </function>
+    <function name="disableDocument" return-type="Document">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Document</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="findDocumentsByName" return-type="Page">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,integer,integer</item>
+        <item name="returnType">Page</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="integer"/>
+      <parameter name="arg2" type="integer"/>
+    </function>
+    <function name="save" return-type="Document">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Document</item>
+        <item name="returnType">Document</item>
+      </annotation>
+      <parameter name="arg0" type="Document"/>
+    </function>
+    <function name="setVersionManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">VersionManager</item>
+      </annotation>
+      <parameter name="arg0" type="VersionManager"/>
+    </function>
+  </service>
+  <service name="RoleController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">roleController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="getAll" return-type="Role[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Role</item>
+      </annotation>
+    </function>
+    <function name="setRoleManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">RoleManager</item>
+      </annotation>
+      <parameter name="arg0" type="RoleManager"/>
+    </function>
+    <function name="get_method" return-type="Role">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Role</item>
+      </annotation>
+      <annotation name="ActionScriptGeneration">
+        <item name="remoteFunction">get</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="getRolesByGroup" return-type="Role[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Role</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="setGroupManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">GroupManager</item>
+      </annotation>
+      <parameter name="arg0" type="GroupManager"/>
+    </function>
+  </service>
+  <service name="DepartmentController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">departmentController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setGroupManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">GroupManager</item>
+      </annotation>
+      <parameter name="arg0" type="GroupManager"/>
+    </function>
+    <function name="setDepartmentManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">DepartmentManager</item>
+      </annotation>
+      <parameter name="arg0" type="DepartmentManager"/>
+    </function>
+    <function name="getTopLevelDepartment" return-type="Department">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Department</item>
+      </annotation>
+    </function>
+    <function name="getDepartmentsByGroup" return-type="Department[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Department</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+  </service>
+  <service name="PrivilegeController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">privilegeController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="getChildren" return-type="Privilege[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Privilege</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="getAll" return-type="Privilege[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Privilege</item>
+      </annotation>
+    </function>
+    <function name="setPrivilegeManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">PrivilegeManager</item>
+      </annotation>
+      <parameter name="arg0" type="PrivilegeManager"/>
+    </function>
+    <function name="getPrivilegesByUser" return-type="Privilege[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Privilege</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="getPrivilegesByGroup" return-type="Privilege[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Privilege</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="hasPrivilege" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="setUserManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">UserManager</item>
+      </annotation>
+      <parameter name="arg0" type="UserManager"/>
+    </function>
+    <function name="setGroupManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">GroupManager</item>
+      </annotation>
+      <parameter name="arg0" type="GroupManager"/>
+    </function>
+    <function name="get_method" return-type="Privilege">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Privilege</item>
+      </annotation>
+      <annotation name="ActionScriptGeneration">
+        <item name="remoteFunction">get</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="getTopLevelPrivilege" return-type="Privilege[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Privilege</item>
+      </annotation>
+    </function>
+  </service>
+  <service name="VersionController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">versionController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="getVersionsByDocument" return-type="Page">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,integer,integer</item>
+        <item name="returnType">Page</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="integer"/>
+      <parameter name="arg2" type="integer"/>
+    </function>
+    <function name="setVersionManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">VersionManager</item>
+      </annotation>
+      <parameter name="arg0" type="VersionManager"/>
+    </function>
+    <function name="enableVersion" return-type="Version">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">Version</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+  </service>
+  <entity name="VersionManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">VersionManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.VersionManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">DocumentController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="Page">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Page</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.common.Page</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="pageNo" type="integer"/>
+    <property name="empty" type="boolean"/>
+    <property name="pageSize" type="integer"/>
+    <property name="list" type="opaque[]"/>
+    <property name="rowCount" type="long"/>
+    <property name="totalPage" type="integer"/>
+  </entity>
+  <entity name="Version">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Version</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Version</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">DocumentController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="enabled" type="boolean"/>
+    <property name="document" type="Document"/>
+    <property name="alias" type="string"/>
+    <property name="created" type="date"/>
+    <property name="creater" type="User"/>
+    <property name="pathname" type="string"/>
+    <property name="type" type="string"/>
+    <property name="size" type="double"/>
+  </entity>
+  <service name="RootController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">rootController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setRootManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">RootManager</item>
+      </annotation>
+      <parameter name="arg0" type="RootManager"/>
+    </function>
+    <function name="getEnableRoot" return-type="Root">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Root</item>
+      </annotation>
+    </function>
+    <function name="getAll" return-type="Root[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Root</item>
+      </annotation>
+    </function>
+    <function name="enable" return-type="Root">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Root</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="existPath" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="save" return-type="Root">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Root</item>
+        <item name="returnType">Root</item>
+      </annotation>
+      <parameter name="arg0" type="Root"/>
+    </function>
+    <function name="getUnHidden" return-type="Root[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Root</item>
+      </annotation>
+    </function>
+    <function name="existName" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+  </service>
+  <entity name="RootManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">RootManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.RootManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">DocumentController,RootController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="enableRoot" type="Root"/>
+    <property name="unHidden" type="Root[]"/>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <service name="GroupController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">groupController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setPrivilegeManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">PrivilegeManager</item>
+      </annotation>
+      <parameter name="arg0" type="PrivilegeManager"/>
+    </function>
+    <function name="setRoleManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">RoleManager</item>
+      </annotation>
+      <parameter name="arg0" type="RoleManager"/>
+    </function>
+    <function name="saveOrUpdate" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Group</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="Group"/>
+    </function>
+    <function name="removePrivilege" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="removeDepartment" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="getAll" return-type="Group[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Group</item>
+      </annotation>
+    </function>
+    <function name="getById" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="enableOrDisableGroup" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="addRoles" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,opaque</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="opaque[]"/>
+    </function>
+    <function name="setGroupManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">GroupManager</item>
+      </annotation>
+      <parameter name="arg0" type="GroupManager"/>
+    </function>
+    <function name="existName" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+    </function>
+    <function name="addPrivileges" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,opaque</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="opaque[]"/>
+    </function>
+    <function name="removeRole" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="setDepartmentManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">DepartmentManager</item>
+      </annotation>
+      <parameter name="arg0" type="DepartmentManager"/>
+    </function>
+    <function name="addDepartments" return-type="Group">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,opaque</item>
+        <item name="returnType">Group</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="opaque[]"/>
+    </function>
+  </service>
+  <entity name="DepartmentManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">DepartmentManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.DepartmentManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">GroupController,DepartmentController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="topLevelDepartment" type="Department"/>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="PrivilegeManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">PrivilegeManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.PrivilegeManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">GroupController,PrivilegeController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+    <property name="topLevelPrivilege" type="Privilege[]"/>
+  </entity>
+  <entity name="RoleManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">RoleManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.RoleManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">GroupController,RoleController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <service name="OperationController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">operationController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="getAll" return-type="Operation[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">Operation</item>
+      </annotation>
+    </function>
+    <function name="setSecurityManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">SecurityManager</item>
+      </annotation>
+      <parameter name="arg0" type="SecurityManager"/>
+    </function>
+    <function name="setUserManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">UserManager</item>
+      </annotation>
+      <parameter name="arg0" type="UserManager"/>
+    </function>
+    <function name="hasOperation" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string,string</item>
+        <item name="returnType">boolean</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+      <parameter name="arg2" type="string"/>
+    </function>
+    <function name="save" return-type="Operation">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Operation</item>
+        <item name="returnType">Operation</item>
+      </annotation>
+      <parameter name="arg0" type="Operation"/>
+    </function>
+    <function name="setDocumentManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">DocumentManager</item>
+      </annotation>
+      <parameter name="arg0" type="DocumentManager"/>
+    </function>
+    <function name="setOperationManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">OperationManager</item>
+      </annotation>
+      <parameter name="arg0" type="OperationManager"/>
+    </function>
+  </service>
+  <entity name="UserManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">UserManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.UserManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,UserController,PrivilegeController,OperationController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="User[]"/>
+  </entity>
+  <service name="SecurityController">
+    <annotation name="ActionScriptGeneration">
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services</item>
+      <item name="Destination">securityController</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="contextRoot">/dm</item>
+      <item name="rootUrl">http://localhost/dm</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost/dm/messagebroker/amf</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">BlazeDS</item>
+    </annotation>
+    <function name="setGroupManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">GroupManager</item>
+      </annotation>
+      <parameter name="arg0" type="GroupManager"/>
+    </function>
+    <function name="addOperations" return-type="Security">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,opaque</item>
+        <item name="returnType">Security</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="opaque[]"/>
+    </function>
+    <function name="getByDocumentAndGroup" return-type="Security">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">Security</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="save" return-type="Security">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">Security</item>
+        <item name="returnType">Security</item>
+      </annotation>
+      <parameter name="arg0" type="Security"/>
+    </function>
+    <function name="setDocumentManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">DocumentManager</item>
+      </annotation>
+      <parameter name="arg0" type="DocumentManager"/>
+    </function>
+    <function name="setOperationManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">OperationManager</item>
+      </annotation>
+      <parameter name="arg0" type="OperationManager"/>
+    </function>
+    <function name="setSecurityManager" return-type="void">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">SecurityManager</item>
+      </annotation>
+      <parameter name="arg0" type="SecurityManager"/>
+    </function>
+    <function name="removeOperation" return-type="Security">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string</item>
+        <item name="returnType">Security</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+    </function>
+    <function name="create" return-type="Security">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParams">string,string,opaque</item>
+        <item name="returnType">Security</item>
+      </annotation>
+      <parameter name="arg0" type="string"/>
+      <parameter name="arg1" type="string"/>
+      <parameter name="arg2" type="opaque[]"/>
+    </function>
+  </service>
+  <entity name="User">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">User</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.User</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,UserController,PrivilegeController,OperationController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="superior" type="User"/>
+    <property name="lockflag" type="long"/>
+    <property name="status" type="long"/>
+    <property name="departments" type="Department[]"/>
+    <property name="privileges" type="Privilege[]"/>
+    <property name="password" type="string"/>
+    <property name="defaultDepartment" type="Department"/>
+    <property name="id" type="string"/>
+    <property name="username" type="string"/>
+    <property name="email" type="string"/>
+    <property name="name" type="string"/>
+    <property name="roles" type="Role[]"/>
+    <property name="telephone" type="string"/>
+    <property name="groups" type="Group[]"/>
+  </entity>
+  <entity name="Document">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Document</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Document</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="enabled" type="boolean"/>
+    <property name="lastModified" type="date"/>
+    <property name="alias" type="string"/>
+    <property name="created" type="date"/>
+    <property name="root" type="Root"/>
+    <property name="owner" type="User"/>
+    <property name="destoried" type="boolean"/>
+    <property name="parent" type="Document"/>
+    <property name="pathname" type="string"/>
+    <property name="type" type="string"/>
+    <property name="size" type="double"/>
+  </entity>
+  <entity name="Operation">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Operation</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Operation</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">OperationController,SecurityController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="description" type="string"/>
+    <property name="name" type="string"/>
+  </entity>
+  <entity name="GroupManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">GroupManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.GroupManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">GroupController,PrivilegeController,RoleController,DepartmentController,SecurityController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="Privilege">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Privilege</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Privilege</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,UserController,GroupController,PrivilegeController,OperationController,RoleController,DepartmentController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="description" type="string"/>
+    <property name="name" type="string"/>
+    <property name="parent" type="Privilege"/>
+  </entity>
+  <entity name="OperationManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">OperationManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.OperationManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">OperationController,SecurityController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="Group">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Group</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Group</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,UserController,GroupController,PrivilegeController,OperationController,RoleController,DepartmentController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="description" type="string"/>
+    <property name="roles" type="Role[]"/>
+    <property name="name" type="string"/>
+    <property name="enable" type="boolean"/>
+    <property name="departments" type="Department[]"/>
+    <property name="privileges" type="Privilege[]"/>
+  </entity>
+  <entity name="Security">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Security</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Security</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">SecurityController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="document" type="Document"/>
+    <property name="operations" type="Operation[]"/>
+    <property name="group" type="Group"/>
+  </entity>
+  <entity name="DocumentManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">DocumentManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.DocumentManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,OperationController,SecurityController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="SecurityManager">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">SecurityManager</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.service.SecurityManager</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">OperationController,SecurityController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="all" type="opaque[]"/>
+  </entity>
+  <entity name="Root">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Root</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Root</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,RootController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="enabled" type="boolean"/>
+    <property name="hidden" type="boolean"/>
+    <property name="name" type="string"/>
+    <property name="absolutePath" type="string"/>
+  </entity>
+  <entity name="Role">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Role</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Role</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,UserController,GroupController,PrivilegeController,OperationController,RoleController,DepartmentController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="name" type="string"/>
+    <property name="sortid" type="string"/>
+    <property name="groups" type="Group[]"/>
+  </entity>
+  <entity name="Department">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">Department</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">name.xuyuanxiang.model.Department</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">LogController,DocumentController,UserController,GroupController,PrivilegeController,OperationController,RoleController,DepartmentController,SecurityController,VersionController</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <property name="id" type="string"/>
+    <property name="levels" type="long"/>
+    <property name="name" type="string"/>
+    <property name="children" type="Department[]"/>
+    <property name="parent" type="Department"/>
+    <property name="code" type="string"/>
+    <property name="groups" type="Group[]"/>
+  </entity>
+</model>

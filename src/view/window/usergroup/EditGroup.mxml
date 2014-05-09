@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" title="编辑用户组"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="480" height="320" 
+			   creationComplete="init()" close="close()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import services.GroupController;
+			
+			import valueObjects.Group;
+			
+			[Bindable]
+			public var group:Group = new Group();
+			
+			public var refresnFunction:Function;
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{
+				if(validName.validate().results == null && validDesc.validate().results == null
+					&& (msgLbl.text == null || msgLbl.text.length <=0) ){
+					Constant.addLoading(this.parent);
+					var groupController:GroupController = new GroupController();
+					groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+					groupController.addEventListener(ResultEvent.RESULT,
+						function(e:ResultEvent):void{
+							Constant.removeLoading();
+							refresnFunction.call();
+							close();
+						}
+					);
+					group.name = inputName.text;
+					group.description = inputDesc.text;
+					groupController.saveOrUpdate(group);
+					
+				}
+			}
+			
+			protected function init():void
+			{
+				if(group.name != null && group.name.length > 0)
+					inputName.text = group.name;
+				if(group.description != null && group.description.length > 0)
+					inputDesc.text = group.description;
+			}
+			
+			protected function close():void
+			{
+				Util.removePop(this);				
+			}
+			
+			protected function validName_validHandler(event:ValidationResultEvent):void
+			{
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						if(e.result == "true"){
+							msgLbl.text = "组名称已存在！";
+						} else{
+							msgLbl.text = "";
+						}
+					}
+				);
+				groupController.existName(inputName.text);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:StringValidator id="validName" source="{inputName}" property="text" required="true" requiredFieldError="组名称不能为空！" 
+							maxLength="64" tooLongError="组名称长度不能超过64个字符！"
+							valid="validName_validHandler(event)"/>
+		<mx:StringValidator id="validDesc" source="{inputDesc}" property="text" required="true" requiredFieldError="描述不能为空！" maxLength="255" tooLongError="描述长度不能超过255个字符！"/>
+	</fx:Declarations>
+	<s:Form width="100%" height="100%">
+		<s:HGroup width="100%" verticalAlign="middle" horizontalAlign="center">
+			<s:Label id="msgLbl" color="red"/>
+		</s:HGroup>
+		<s:FormItem label="组名称" width="80">
+			<s:TextInput id="inputName" width="280"/>
+		</s:FormItem>
+		<s:FormItem label="描述" width="80">
+			<s:TextArea id="inputDesc" width="280" height="80" />
+		</s:FormItem>
+		<s:FormItem width="80">
+			<s:HGroup width="100%" horizontalAlign="right" verticalAlign="middle">
+				<s:Button id="submitBtn" width="80" icon="{Images.submit_button}" label="保存" click="submitBtn_clickHandler(event)"/>
+				<s:Button id="cancleBtn" width="80" icon="{Images.cancle_button}" label="取消" click="close()"/>
+			</s:HGroup>
+		</s:FormItem>
+	</s:Form>
+</s:TitleWindow>

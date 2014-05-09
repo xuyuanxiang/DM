@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window:BaseWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:window="view.window.*"
+				   width="800" height="480" 
+				  enableRecoverBtn="true"  layout="absolute" selectedIndex="1"
+				   showCurrentPath="false"
+				    creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import services.DocumentController;
+			
+			import valueObjects.Document;
+			import valueObjects.Page;
+
+			override protected function init():void{
+				getPage(1,15);
+			}
+			
+			override protected function getPage(_pageNo:Number, _pageSize:Number):void{
+				var controller:DocumentController = new DocumentController();
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						assignment(e.result as Page);
+					}
+				);
+				controller.getRecycleDocuments(_pageNo,_pageSize);
+			}
+			
+			override protected function recover(document:Document):void{
+				securityAuth("还原",document,
+					function():void{
+						enableDocument(document);
+					}
+				);
+			}
+			
+			protected function enableDocument(document:Document):void{
+				var controller:DocumentController = new DocumentController();
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						getPage(pageNo,pageSize);
+					}
+				);
+				controller.enableDocument(document.id);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</window:BaseWindow>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="768" height="480" creationComplete="init()"
+			   xmlns:fp="com.devaldi.controls.flexpaper.*"
+			   title="{currDoc == null? '' :currDoc.alias}" close="close()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import global.Util;
+			
+			import myevent.MyEvent;
+			
+			import services.DocumentController;
+			import services.VersionController;
+			
+			import valueObjects.Document;
+			import valueObjects.Page;
+			import valueObjects.Version;
+			
+			[Bindable]
+			public var currDoc:Document;
+			
+			[Bindable]
+			private var swfPath:String;
+			
+			[Bindable]
+			private var fileRef:FileReference;
+			[Bindable]
+			private var versionDP:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public var pageNo:Number;
+			[Bindable]
+			public var pageSize:Number;
+			[Bindable]
+			public var rowCount:Number;
+			[Bindable]
+			public var totalPage:Number;
+			
+			public var refreshFunction:Function;
+			
+			protected function assignment(page:Page):void{
+				this.pageNo = page.pageNo;
+				this.pageSize = page.pageSize;
+				this.rowCount = page.rowCount;
+				this.totalPage = page.totalPage;
+				this.versionDP = page.list;
+				enableBtn();
+			}
+			
+			protected function enableBtn():void
+			{
+				prevBtn.enabled = pageNo > 1;
+				nextBtn.enabled = pageNo < totalPage;
+			}
+			
+			protected function getVersions(_pageNo:Number,_pageSize:Number):void{
+				Constant.addLoading(this.parent);
+				var versionController:VersionController = new VersionController();
+				versionController.addEventListener(FaultEvent.FAULT,faultHandler);
+				versionController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void {
+						Constant.removeLoading();
+						assignment(e.result as Page);
+					}
+				);
+				versionController.getVersionsByDocument(currDoc.id,_pageNo,_pageSize);
+			}
+			
+			protected function init():void
+			{
+				if(currDoc != null)
+					getVersions(1,15);
+				this.addEventListener(MyEvent.REFRESH,
+					function(e:MyEvent):void{
+						var versionId:String = e.getData() as String;
+						var versionController:VersionController = new VersionController();
+						versionController.addEventListener(FaultEvent.FAULT,faultHandler);
+						versionController.addEventListener(ResultEvent.RESULT,
+							function(ee:ResultEvent):void{
+								getVersions(pageNo,pageSize);
+							}
+						);
+						versionController.enableVersion(currDoc.id,versionId);
+					}
+				);
+			}
+			
+			private function initProgressBar(event: Event): void
+			{
+				pb.label = "准备上传";
+				pb.setProgress(0, 100);
+				pb.visible = false;
+			}
+			
+			protected function browseBtn_clickHandler(event:MouseEvent):void
+			{
+				fileRef = new FileReference();				
+				fileRef.browse( [
+					new FileFilter("文档 （*.doc，*.xls，*.ppt，*.pdf）","*.doc;*.xls;*.ppt;*.pdf"),
+					new FileFilter("图片 （*.png，*.gif，*.jpg）","*.png;*.gif;*.jpg")
+				]);
+				fileRef.addEventListener(Event.SELECT,function():void{
+					if ( fileRef.size > 1024 * 1024 * 1024 ){
+						Alert.show("无法上传！文件大小超过1G限制！");
+						fileRef = null;
+					} else {
+						nameLbl.text = fileRef.name;
+					}
+				});
+				fileRef.addEventListener(ProgressEvent.PROGRESS,
+					function(event: ProgressEvent): void
+					{
+						pb.setProgress(event.bytesLoaded, event.bytesTotal);
+						pb.label = "正在加载本地文件...";
+					}
+				);
+				fileRef.addEventListener(Event.COMPLETE,
+					function():void{
+						if(fileRef.data == null){
+							pb.label = "上传失败，所选文件为空！"
+							return; 
+						}
+						pb.label = "正在上传至服务器...";
+						var controller:DocumentController = new DocumentController();
+						controller.addEventListener(FaultEvent.FAULT,faultHandler);
+						controller.addEventListener(ResultEvent.RESULT,
+							function(resultEvent:ResultEvent):void{
+								currDoc = resultEvent.result as Document;
+								var upload:Uploader = new Uploader(fileRef,currDoc.pathname);
+								upload.doUpload(pb , 
+									function():void{
+										pb.label = "上传成功";
+										pb.visible = false;
+										myTabNav.selectedIndex = 0;
+										fileRef = null;
+										getVersions(pageNo,pageSize);
+									}
+								);
+							}
+						);
+						if( currDoc != null ){
+							var version:Version = new Version();
+							version.document = currDoc;
+							version.creater = Constant.user;
+							version.size = fileRef.size;
+							version.type = fileRef.type.replace(".","");
+							version.alias = fileRef.name;
+							if(version.size > 0 && version.type.length > 0)							
+								controller.updateDocument(currDoc.id,version);
+						}
+					}
+				);
+			}
+			
+			protected function uploadBtn_clickHandler(event:MouseEvent):void
+			{
+				if(fileRef != null) {
+					pb.visible = true;
+					fileRef.load();
+				}
+			}
+			
+			protected function close():void
+			{
+				refreshFunction.call();
+				Util.removePop(this);
+			}
+			
+			protected function editBtn_clickHandler(event:MouseEvent):void
+			{
+				myTabNav.selectedIndex = 1;				
+			}
+			
+			protected function prevBtn_clickHandler(event:MouseEvent):void
+			{
+				getVersions(pageNo-1,pageSize);
+			}
+			
+			protected function nextBtn_clickHandler(event:MouseEvent):void
+			{
+				getVersions(pageNo+1,pageSize);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:ViewStack id="myTabNav" width="100%" height="100%">
+		<s:NavigatorContent width="100%" height="100%">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="90%" height="8%">
+					<s:Label text="修订记录："/>
+					<s:HGroup width="100%" height="100%" horizontalAlign="right" verticalAlign="middle">
+						<s:Label text="第{pageNo}页，共{totalPage}页。"/>
+						<s:Button label="上一页" id="prevBtn" click="prevBtn_clickHandler(event)"/>
+						<s:Button label="下一页" id="nextBtn" click="nextBtn_clickHandler(event)"/>
+					</s:HGroup>
+				</s:HGroup>
+				<mx:DataGrid id="versionDG" width="90%" height="75%" dataProvider="{versionDP}">
+					<mx:columns>
+						<mx:DataGridColumn headerText="回滚" itemRenderer="view.itemrenderer.VersionOperationItemRenderer"/>
+						<mx:DataGridColumn headerText="名称" dataField="alias"/>
+						<mx:DataGridColumn width="100" headerText="大小" dataField="size" 
+										   itemRenderer="view.itemrenderer.DocumentSizeItemRenderer"/>
+						<mx:DataGridColumn width="160" headerText="修订时间" dataField="created" 
+										   itemRenderer="view.itemrenderer.CreatedDateItemRender"/>
+						<mx:DataGridColumn width="60" headerText="修订人" dataField="creater.name"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:HGroup width="90%" height="7%" horizontalAlign="right">
+					<s:Button  label="修订" id="editBtn" icon="{Images.edit_toolbar}" click="editBtn_clickHandler(event)"/>
+					<s:Button  label="关闭" click="this.close()" icon="{Images.cancle_button}"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:Form width="90%" height="85%">
+					<s:FormItem width="80" label="名称：">
+						<s:Label id="nameLbl" width="100%"/>
+					</s:FormItem>
+					<s:FormItem width="80" label="进度：">
+						<mx:ProgressBar id="pb" width="100%" creationComplete="initProgressBar(event)"
+										labelPlacement="center" maximum="100" minimum="0" mode="manual"
+										paddingLeft="5" paddingRight="5" textAlign="left" verticalCenter="true"/>
+					</s:FormItem>
+				</s:Form>
+				<s:HGroup width="90%" height="5%" horizontalAlign="right">
+					<s:Button id="browseBtn" label="浏览" icon="{Images.open_toolbar}" click="browseBtn_clickHandler(event)"/>
+					<s:Button id="uploadBtn" label="上传" enabled="{fileRef != null}" icon="{Images.upload_toolbar}" click="uploadBtn_clickHandler(event)"/>
+					<s:Button  label="关闭" click="this.close()" icon="{Images.cancle_button}"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+	</mx:ViewStack>
+</s:TitleWindow>

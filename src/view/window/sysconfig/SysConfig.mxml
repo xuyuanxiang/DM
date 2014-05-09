@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns:MDIWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			  xmlns:s="library://ns.adobe.com/flex/spark"
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  xmlns:window="view.window.*"
+			  xmlns:ns="http://code.google.com/p/flexlib/"
+			  title="系统设置" x="240" y="100" width="540" height="400" 
+			  creationComplete="init()" layout="absolute">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import services.RootController;
+			
+			import valueObjects.Root;
+			
+			[Bindable]
+			public var rootDP:ArrayCollection = new ArrayCollection();
+			
+			
+			protected function init():void
+			{
+				var rootController:RootController = new RootController();
+				rootController.addEventListener(ResultEvent.RESULT,
+					function(event:ResultEvent):void{
+						rootDP = event.result as ArrayCollection;
+					}
+				);
+				rootController.getAll();
+			}
+			
+			protected function createBtn_clickHandler(event:MouseEvent):void
+			{
+				var edit:SysEdit = new SysEdit();
+				edit.refreshFunction = init;
+				Util.addPop(edit,this);
+			}
+			
+			protected function enableBtn_clickHandler(event:MouseEvent):void
+			{
+				Constant.addLoading(this.parent);
+				var root:Root = rootDG.selectedItem as Root;
+				var rootController:RootController = new RootController();
+				rootController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						var root:Root = e.result as Root;
+						if(root.enabled)
+							Constant.root = root;
+						Constant.removeLoading();
+						init();
+					}
+				);
+				rootController.addEventListener(FaultEvent.FAULT,faultHandler);
+				rootController.enable(root.id);
+			}
+			
+			protected function editBtn_clickHandler(event:MouseEvent):void
+			{
+				var root:Root = rootDG.selectedItem as Root;
+				var edit:SysEdit = new SysEdit();
+				edit.currRoot = root;
+				edit.refreshFunction = init;
+				PopUpManager.addPopUp(edit,this);
+				PopUpManager.centerPopUp(edit);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<s:HGroup width="100%" height="10%" verticalAlign="middle">
+			<mx:LinkButton id="createBtn" width="50" height="100%" label="新建"
+						   click="createBtn_clickHandler(event)" icon="{Images.add_toolbar}"
+						   labelPlacement="bottom" toolTip="新建"/>
+			<mx:LinkButton id="editBtn" width="50" height="100%" label="修改"
+						   click="editBtn_clickHandler(event)"
+						   enabled="{rootDG.selectedItem != null}" icon="{Images.tool_toolbar}"
+						   labelPlacement="bottom" toolTip="修改"/>
+			<mx:LinkButton id="enableBtn" width="50" height="100%" label="激活"
+						   click="enableBtn_clickHandler(event)"
+						   enabled="{rootDG.selectedItem != null}" icon="{Images.enable_toolbar}"
+						   labelPlacement="bottom" toolTip="激活"/>
+		</s:HGroup>
+		<mx:DataGrid id="rootDG" width="100%" height="90%" dataProvider="{rootDP}">
+			<mx:columns>
+				<mx:DataGridColumn width="80" textAlign="center" dataField="enabled" headerText="状态" itemRenderer="view.itemrenderer.SysConfigEnableItemRenderer"/>
+				<mx:DataGridColumn dataField="name" headerText="显示名称"/>
+				<mx:DataGridColumn dataField="absolutePath" headerText="绝对路径"/>
+			</mx:columns>
+		</mx:DataGrid>
+	</s:VGroup>
+</ns:MDIWindow>

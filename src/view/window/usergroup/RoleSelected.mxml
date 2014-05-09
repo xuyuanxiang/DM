@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="320" height="480" close="clost()" creationComplete="init()" title="未添加角色">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import services.GroupController;
+			import services.RoleController;
+			
+			import valueObjects.Role;
+			
+			[Bindable]
+			public var _group:Object;
+			
+			[Bindable]
+			private var roleDP:ArrayCollection = new ArrayCollection();
+			
+			public var refreshFunction:Function;
+			
+			protected function init():void{
+				Constant.addLoading(this);
+				var roleController:RoleController = new RoleController();
+				roleController.addEventListener(FaultEvent.FAULT,faultHandler);
+				roleController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						for each(var role:Role in e.result as ArrayCollection){
+							var obj:Object = new Object();
+							obj.id = role.id;
+						    obj.state = isSelected(role);
+							obj.name = role.name;
+							roleDP.addItem(obj);
+						}
+						Constant.removeLoading();
+					}
+				);
+				roleController.getAll();
+			}
+			
+			protected function isSelected(role:Object):Number{
+				for each(var tmp:Object in _group.roles as ArrayCollection){
+					if(role.id == tmp.id){
+						return 1;
+					}
+				}
+				return 0;
+			}
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{
+				Constant.addLoading(this);
+				var roles:ArrayCollection = new ArrayCollection();
+				for each(var item:Object in roleDP){
+					if(item.state == 1){
+						roles.addItem(item.id);
+					}
+				}
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						refreshFunction.call();
+						clost();
+					}
+				);
+				groupController.addRoles(_group.id,roles);
+			}
+			
+			protected function cancleBtn_clickHandler(event:MouseEvent):void
+			{
+				clost();
+			}
+			
+			protected function clost():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<mx:DataGrid width="90%" height="80%" dataProvider="{roleDP}">
+			<mx:columns>
+				<mx:DataGridColumn width="40" dataField="selected" headerText="选择"
+								   itemRenderer="view.itemrenderer.DataGridCheckBoxItemRender"/>
+				<mx:DataGridColumn dataField="name" headerText="角色名称"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<s:HGroup width="90%" height="10%" horizontalAlign="right">
+			<s:Button id="submitBtn" icon="{Images.submit_button}" label="确定" click="submitBtn_clickHandler(event)"/>
+			<s:Button id="cancleBtn" icon="{Images.cancle_button}" label="取消" click="cancleBtn_clickHandler(event)"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:TitleWindow>

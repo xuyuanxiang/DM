@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+						  xmlns:s="library://ns.adobe.com/flex/spark"
+						  xmlns:mx="library://ns.adobe.com/flex/mx"
+						  creationComplete="mxdatagriditemrenderer1_creationCompleteHandler(event)"
+						  focusEnabled="true">
+	<fx:Declarations>
+		<s:DateTimeFormatter id="dateFormatter" locale="zh-CN"/>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import assets.Images;
+			
+			
+			
+			protected function mxdatagriditemrenderer1_creationCompleteHandler(event:FlexEvent):void
+			{
+				fieldValue.text = dateFormatter.format(this.data.lastModified);
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HGroup width="100%" height="100%" horizontalAlign="left" verticalAlign="middle">
+		<s:Label id="fieldValue"/>
+	</s:HGroup>
+</s:MXDataGridItemRenderer>

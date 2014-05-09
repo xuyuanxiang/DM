@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="540" height="320" close="close()" creationComplete="init()" title="权限授予">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import global.Constant;
+			
+			import services.GroupController;
+			import services.PrivilegeController;
+			
+			import valueObjects.Group;
+			import valueObjects.Privilege;
+			
+			[Bindable]
+			public var _group:Group
+			
+			[Bindable]
+			private var privilegeDP:ArrayCollection = new ArrayCollection();
+			
+			public var refreshFunction:Function;
+			
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{
+				var privileges:ArrayCollection = new ArrayCollection();
+				for each(var item:Object in privilegeDP){
+					if(item.state == 1){
+						privileges.addItem(item.id);
+					}
+				}
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						refreshFunction.call();
+						close();
+					}
+				);
+				groupController.addPrivileges(_group.id,privileges);
+			}
+			
+			protected function close():void
+			{
+				PopUpManager.removePopUp(this);				
+			}
+			
+			protected function isSelected(privilege:Object):Number{
+				for each(var tmp:Object in _group.privileges as ArrayCollection){
+					if( tmp.id == privilege.id )
+						return 1
+				}
+				return 0;
+			}
+			
+			protected function init():void
+			{
+				Constant.addLoading(this);
+				var privilegeController:PrivilegeController = new PrivilegeController();
+				privilegeController.addEventListener(FaultEvent.FAULT,faultHandler);
+				privilegeController.addEventListener(ResultEvent.RESULT,
+					function(event:ResultEvent):void{
+						for each(var privilege:Privilege in event.result as ArrayCollection){
+							var obj:Object = new Object();
+							obj.state = isSelected(privilege);
+							obj.id = privilege.id;
+							obj.name = privilege.name;
+							obj.description = privilege.description;
+							privilegeDP.addItem(obj);
+							Constant.removeLoading();
+						}
+					}
+				);
+				privilegeController.getAll();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<mx:DataGrid width="90%" height="80%" dataProvider="{privilegeDP}">
+			<mx:columns>
+				<mx:DataGridColumn dataField="description" headerText="权限"/>
+				<mx:DataGridColumn width="150" headerText="授权"
+								   itemRenderer="view.itemrenderer.PrivilegeAuthItemRenderer"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<s:HGroup width="90%" height="10%" horizontalAlign="right">
+			<s:Button id="submitBtn"  icon="{Images.submit_button}" label="确定" click="submitBtn_clickHandler(event)"/>
+			<s:Button id="cancleBtn" icon="{Images.cancle_button}" label="取消" click="close()"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:TitleWindow>

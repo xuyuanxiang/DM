@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:controls1="ht.component.controls.*"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="320" height="540" title="选择部门"
+			   creationComplete="init()" close="close()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import global.Constant;
+			
+			import services.DepartmentController;
+			import services.GroupController;
+			
+			import valueObjects.Department;
+			[Bindable]
+			public var _dataProvider:XMLList = new XMLList();
+			
+			public var _group:Object;
+			
+			public var refreshFunction:Function;
+			
+			protected function init():void
+			{
+				Constant.addLoading(this);
+				var departmentController:DepartmentController = new DepartmentController();
+				departmentController.addEventListener(FaultEvent.FAULT,faultHandler);
+				departmentController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						var str:String = "";
+						var department:Department = e.result as Department;
+							str += "<node state='"+isSelected(department)+"' id='"+department.id+"' name='"+department.name+"'>";
+							for each(var d0:Object in department.children as ArrayCollection){
+								str += "<node state='"+isSelected(d0)+"' id='"+d0.id+"' name='"+d0.name+"'>";
+								for each(var d1:Object in d0.children as ArrayCollection){
+									str += "<node state='"+isSelected(d1)+"' id='"+d1.id+"' name='"+d1.name+"'>";
+									for each(var d2:Object in d1.children as ArrayCollection){
+										str += "<node state='"+isSelected(d2)+"' id='"+d2.id+"' name='"+d2.name+"'>";
+										for each(var d3:Object in d2.children as ArrayCollection){
+											str += "<node state='"+isSelected(d3)+"' id='"+d3.id+"' name='"+d3.name+"'>";
+											for each(var d4:Object in d3.children as ArrayCollection){
+												str += "<node state='"+isSelected(d4)+"' id='"+d4.id+"' name='"+d4.name+"'></node>";
+											}
+											str += "</node>";
+										}
+										str += "</node>";
+									}
+									str += "</node>";
+								}
+								str += "</node>";
+							}
+							str += "</node>";
+						var xml:XML = new XML(str);
+						_dataProvider = new XMLList(xml);
+						Constant.removeLoading();
+					}
+				);
+				departmentController.getTopLevelDepartment();
+			}
+			
+			protected function isSelected(department:Object):Number{
+				for each(var tmp:Object in _group.departments as ArrayCollection){
+					if(tmp.id == department.id)
+						return 1;
+				}
+				return 0;
+			}
+			
+			protected function close():void
+			{
+				PopUpManager.removePopUp(this);				
+			}
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{	
+				Constant.addLoading(this);
+				var departments:ArrayCollection = new ArrayCollection();
+				var department:Object;
+				for each(var xml:XML in _dataProvider){
+					if( xml.attribute("state")+"" == "1" )
+						departments.addItem(xml.attribute("id") + "");
+					for each(var d0:XML in xml.children()){
+						if( d0.attribute("state")+"" == "1" )
+							departments.addItem(d0.attribute("id") + "");
+						for each(var d1:XML in d0.children()){
+							if( d1.attribute("state")+"" == "1" )
+								departments.addItem(d1.attribute("id") + "");
+							for each(var d2:XML in d1.children()){
+								if( d2.attribute("state")+"" == "1" )
+									departments.addItem(d2.attribute("id") + "");
+								for each(var d3:XML in d2.children()){
+									if( d3.attribute("state")+"" == "1" )
+										departments.addItem(d3.attribute("id") + "");
+									for each(var d4:XML in d3.children()){
+										if( d4.attribute("state")+"" == "1" )
+											departments.addItem(d4.attribute("id") + "");
+									}
+								}
+							}
+						}
+					}
+				}
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						refreshFunction.call();
+						close();
+					}
+				);
+				groupController.addDepartments(_group.id,departments);
+			}
+			
+			protected function cancleBtn_clickHandler(event:MouseEvent):void
+			{
+				close();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<controls1:CheckTree id="deptTree"
+								 width="90%"  height="80%"
+								 checkBoxCascadeOnCheck="false"
+								 labelField="@name"  
+								 checkBoxStateField="@state"  
+								 dataProvider="{_dataProvider}" />  
+		<s:HGroup width="90%" horizontalAlign="right" height="10%">
+			<s:Button label="确定" icon="{Images.submit_button}" id="submitBtn" click="submitBtn_clickHandler(event)"/>
+			<s:Button label="取消" icon="{Images.cancle_button}" id="cancleBtn" click="cancleBtn_clickHandler(event)"/>
+		</s:HGroup>
+	</s:VGroup>
+	
+</s:TitleWindow>

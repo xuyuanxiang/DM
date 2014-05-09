@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns:MDIWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			  xmlns:s="library://ns.adobe.com/flex/spark"
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  xmlns:ns="http://code.google.com/p/flexlib/"
+			  xmlns:view="view.*"
+			  xmlns:services="services.*"
+			  layout="absolute">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import services.LogController;
+			import services.RootController;
+			
+			import valueObjects.Root;
+			
+			import view.window.mydocument.Disk;
+			protected function documentDG_doubleClickHandler(event:MouseEvent):void
+			{
+				open(documentDG.selectedItem as Document);				
+			}
+			
+			protected function hgroup1_creationCompleteHandler(event:FlexEvent):void
+			{
+				var controller:RootController = new RootController();
+				Constant.addLoading(this.parent);
+				controller.addEventListener(FaultEvent.FAULT,faultHandler);
+				controller.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						rootDP = e.result as ArrayCollection;
+						diskContainer.removeAllElements();
+						for each(var root:Root in rootDP){
+							var disk:Disk = new Disk();
+							disk.currRoot = root;
+							disk.itemDoubleClick = function():void{
+								if(Constant.root != null){
+									selectedIndex = 1;
+									init();
+								}
+							};
+							diskContainer.addElement(disk);
+						}
+					}
+				);
+				controller.getUnHidden();
+			}
+			
+			
+			
+
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Script source="../common.as"/>
+	<fx:Script source="base_prop.as"/>
+	<fx:Script source="base_biz.as"/>
+	<fx:Script source="base_ctrl.as"/>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:ViewStack id="myViewStack" width="100%" height="100%" selectedIndex="{selectedIndex}">
+		<s:NavigatorContent width="100%" height="100%">
+			<s:VGroup  width="100%" height="100%" horizontalAlign="center" verticalAlign="middle"  creationComplete="hgroup1_creationCompleteHandler(event)">
+				<s:HGroup id="diskContainer" width="90%" height="90%" verticalAlign="top" gap="24">
+					
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="100%" height="4%" verticalAlign="middle" visible="{showCurrentPath}" includeInLayout="{showCurrentPath}">
+					<s:TextInput id="currPath"  width="100%" height="100%" editable="false" text="{Constant.folderPath.replace(Constant.root.absolutePath,Constant.root.name+':\\')}"/>
+					<s:TextInput id="searchKeyWordsInput" visible="{enableSearchBtn}" includeInLayout="{enableSearchBtn}" width="120" height="100%"/>
+					<s:Button icon="{Images.search_toolbar}" click="searchBtn_clickHandler(event)" visible="{enableSearchBtn}" includeInLayout="{enableSearchBtn}" height="100%" label="搜索" id="searchBtn"/>
+				</s:HGroup>
+				<s:HGroup id="toolbarContainer" width="100%" height="10%" verticalAlign="middle">
+					<mx:VRule height="100%"/>
+					<mx:LinkButton id="backBtn" width="52" height="100%" label="返回"
+								   visible="{enableBackBtn}" includeInLayout="{enableBackBtn}"
+								   click="backBtn_clickHandler(event)"
+								   enabled="{Constant.root != null}"
+								   icon="{Images.back_toolbar}" labelPlacement="bottom"
+								   toolTip="返回{Constant.folder.parent==null ? '' : ('到'+Constant.folder.parent.alias) }"/>
+					<mx:LinkButton id="recoverBtn" width="52" height="100%" label="还原"
+								   visible="{enableRecoverBtn}" includeInLayout="{enableRecoverBtn}"
+								   enabled="{documentDG.selectedItem != null}"
+								   icon="{Images.refresh_toolbar}" labelPlacement="bottom" toolTip="还原"
+								   click="recoverBtn_clickHandler(event)"/>
+					<mx:VRule height="100%" visible="{backBtn.visible ||  recoverBtn.visible}"/>
+					<mx:LinkButton id="createBtn" visible="{Constant.authCreateBtn &amp;&amp; enableCreateBtn}" width="52" height="100%" label="新建"
+								   click="createBtn_clickHandler(event)" icon="{Images.add_folder_toolbar}"
+								   includeInLayout="{Constant.authCreateBtn &amp;&amp; enableCreateBtn}" labelPlacement="bottom" toolTip="新建文件夹"/>
+					<mx:LinkButton id="uploadBtn" visible="{Constant.authUploadBtn &amp;&amp; enableUploadBtn}" width="52" height="100%" label="上传"
+								   click="uploadBtn_clickHandler(event)" icon="{Images.upload_toolbar}"
+								   includeInLayout="{Constant.authUploadBtn &amp;&amp; enableUploadBtn}" labelPlacement="bottom" toolTip="上传文件"/>
+					<mx:VRule visible="{uploadBtn.visible || createBtn.visible}" height="100%"/>
+					<mx:LinkButton id="openBtn" width="52" height="100%" label="打开"
+								   click="openBtn_clickHandler(event)" visible="{enableOpenBtn}" includeInLayout="{enableOpenBtn}"
+								   enabled="{documentDG.selectedItem != null}" icon="{Images.open_toolbar}"
+								   labelPlacement="bottom" toolTip="打开"/>
+					<mx:LinkButton id="downloadBtn" width="52" height="100%" label="下载"
+								   click="downloadBtn_clickHandler(event)" visible="{enableDownloadBtn}" includeInLayout="{enableDownloadBtn}"
+								   enabled="{ documentDG.selectedItem != null }"
+								   icon="{Images.download_toolbar}" labelPlacement="bottom" toolTip="下载"/>
+					<mx:LinkButton id="printBtn" width="52" height="100%" label="打印"
+								   click="printBtn_clickHandler(event)" visible="{enablePrintBtn}" includeInLayout="{enablePrintBtn}"
+								   enabled="{documentDG.selectedItem != null}" icon="{Images.print_toolbar}"
+								   labelPlacement="bottom" toolTip="打开"/>
+					<mx:LinkButton id="removeBtn" width="52" height="100%" label="删除"
+								   click="removeBtn_clickHandler(event)" visible="{enableDeleteBtn}" includeInLayout="{enableDeleteBtn}"
+								   enabled="{documentDG.selectedItem != null}"
+								   icon="{Images.remove_folder_toolbar}" labelPlacement="bottom"
+								   toolTip="删除"/>
+					<mx:VRule visible="{openBtn.visible || downloadBtn.visible || printBtn.visible || removeBtn.visible }" height="100%"/>
+					<mx:LinkButton id="updateBtn" width="52" height="100%" label="修订"
+								   visible="{enableUpdateBtn}" 
+								   includeInLayout="{enableUpdateBtn}" 
+								   enabled="{documentDG.selectedItem != null}" 
+								   click="updateBtn_clickHandler(event)"
+								   icon="{Images.tool_toolbar}"
+								   labelPlacement="bottom" toolTip="修订"/>
+					<mx:LinkButton id="configBtn"  width="52" height="100%" label="设置"
+								   visible="{enableConfigBtn}"
+								   includeInLayout="{enableConfigBtn}" 
+								   enabled="{documentDG.selectedItem != null}" 
+								   click="configBtn_clickHandler(event)"
+								   icon="{Images.gear_toolbar}"
+								   labelPlacement="bottom" toolTip="设置"/>
+					<mx:VRule visible="{updateBtn.visible || configBtn.visible}" height="100%"/>
+					<mx:LinkButton id="infoBtn" width="52" height="100%" label="帮助"
+								   click="infoBtn_clickHandler(event)"
+								   icon="{Images.info_toolbar}"
+								   labelPlacement="bottom" toolTip="帮助"/>
+					<mx:VRule height="100%"/>
+				</s:HGroup>
+				<mx:DataGrid id="documentDG" width="100%" height="80%" dataProvider="{documentDP}" 
+							 doubleClick="documentDG_doubleClickHandler(event)" toolTip="双击打开">
+					<mx:columns>
+						<mx:DataGridColumn dataField="alias" headerText="名称"/>
+						<mx:DataGridColumn width="200" dataField="enableVersion.created" headerText="修改时间"
+										   itemRenderer="view.itemrenderer.LastModifiedItemRenderer"/>
+						<mx:DataGridColumn width="60" dataField="type" headerText="类型"/>
+						<mx:DataGridColumn width="120" dataField="size" headerText="大小" itemRenderer="view.itemrenderer.DocumentSizeItemRenderer"/>
+						<mx:DataGridColumn width="80" dataField="owner.name" headerText="所有者"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:HGroup width="100%" height="6%" horizontalAlign="right" verticalAlign="middle">
+					<s:Button id="refreshBtn" label="刷新" click="refreshBtn_clickHandler(event)"/>
+					<s:Label text="每页显示："/>
+					<s:NumericStepper id="pageSizeNS" change="pageSizeNS_changeHandler(event)"
+									  maximum="{rowCount==0?1:rowCount}" minimum="10" stepSize="5"
+									  value="{pageSize}"/>
+					<s:Label text="条，"/>
+					<s:Label text="共有{rowCount}条记录，当前第"/>
+					<s:NumericStepper id="pageNoNS" change="pageNoNS_changeHandler(event)"
+									  maximum="{totalPage == 0?1:totalPage}" minimum="1" value="{pageNo}"/>
+					<s:Label text="页，共{totalPage}页"/>
+					<s:Button id="prevBtn" label="上一页" click="prevBtn_clickHandler(event)"/>
+					<s:Button id="nextBtn" label="下一页" click="nextBtn_clickHandler(event)"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+	</mx:ViewStack>
+</ns:MDIWindow>

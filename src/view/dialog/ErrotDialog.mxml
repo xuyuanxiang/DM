@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   title="系统故障" close="close()">
+	<fx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			[Bindable]
+			public var event:FaultEvent;
+			[Bindable]
+			public var errorCode:String;
+			[Bindable]
+			public var errorMsg:String;
+			[Bindable]
+			public var errorDetails:String;
+			
+			public function open(parent:DisplayObject,width:Number = 480,height:Number = 400):void{
+				if(event != null){
+					errorCode = event.fault.faultCode;
+					errorMsg = event.fault.faultString;
+					errorDetails = event.fault.faultDetail;
+				}
+				this.width = width;
+				this.height = height;
+				PopUpManager.addPopUp(this, parent, true);
+				PopUpManager.centerPopUp(this);
+			}
+			
+			public function close():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function showDetails_clickHandler(event:MouseEvent):void
+			{
+				detailsArea.visible=true;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="top">
+		<s:Form width="100%" height="100%"  color="red">
+			<s:Label textAlign="center" text="对不起，系统发生错误！"/>
+			<s:Label textAlign="center" text="请检查您当前的网络连接情况，或者联系集团信息部并提供以下内容："/>
+			<s:FormItem width="80" label="错误代码：">
+				<s:TextArea width="100%" height="20" borderVisible="false" text="{errorCode}"/>
+			</s:FormItem>
+			<s:FormItem width="80" label="错误原因：">
+				<s:TextArea width="100%" height="60" borderVisible="false" text="{errorMsg}"/>
+			</s:FormItem>
+			<mx:LinkButton id="showDetails" visible="{errorDetails != null}"
+						   label="查看详细&gt;&gt;" click="showDetails_clickHandler(event)">
+			</mx:LinkButton> 
+			<s:TextArea id="detailsArea" visible="false" width="100%" height="100%" text="{errorDetails}"/>
+			<s:HGroup width="100%" horizontalAlign="right">
+				<s:Button label="关闭" click="close()"/>
+			</s:HGroup>
+		</s:Form>
+	</s:VGroup>
+</s:TitleWindow>

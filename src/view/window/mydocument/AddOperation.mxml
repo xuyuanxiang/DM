@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" title="权限授予"
+			   width="640" height="480" creationComplete="init()" close="close()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectProxy;
+			import mx.utils.object_proxy;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import myevent.MyEvent;
+			
+			import services.OperationController;
+			import services.SecurityController;
+			
+			import valueObjects.Document;
+			import valueObjects.Group;
+			import valueObjects.Operation;
+			import valueObjects.Security;
+			
+			[Bindable]
+			public var security:valueObjects.Security
+			
+			[Bindable]
+			public var group:Group
+			
+			[Bindable]
+			public var doc:Document
+			
+			[Bindable]
+			public var operationsDP:ArrayCollection;
+			
+			public var completeFunction:Function;
+			
+			protected function init():void
+			{
+				getOperations();
+			}
+			
+			protected function getOperations():void{
+				Constant.addLoading(this);
+				var operationController:OperationController = new OperationController();
+				operationController.addEventListener(FaultEvent.FAULT,faultHandler);
+				operationController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						operationsDP = new ArrayCollection();
+						for each(var operation:Operation in e.result as ArrayCollection){
+							var obj:Object = new Object();
+							obj.id = operation.id;
+							obj.description = operation.description;
+							obj.name = operation.name;
+							if(security != null){
+								for each(var tmp:Object in security.operations as ArrayCollection){
+									if( operation.id == tmp.id){
+										obj.state = 1;
+										break;
+									}
+								}
+							}
+							operationsDP.addItem(obj);
+						}
+						Constant.removeLoading();
+					}
+				);
+				operationController.getAll();
+			}
+			
+			protected function close():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function submitBtn_clickHandler(event:MouseEvent):void
+			{
+				Constant.addLoading(this);
+				var selectedOperations:ArrayCollection = new ArrayCollection();
+				for each(var obj:Object in operationsDP){
+					if( obj.state == 1 )
+						selectedOperations.addItem(obj.id);
+				}
+				if( selectedOperations.length > 0 ){
+					save(selectedOperations);
+				}
+			}
+			
+			protected function save(array:ArrayCollection):void{
+				var securityController:SecurityController = new SecurityController();
+				securityController.addEventListener(FaultEvent.FAULT,faultHandler);
+				securityController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						security = e.result as valueObjects.Security;
+						Util.log(doc,"修改了用户组【"+group.name+"】的权限。");
+						Constant.removeLoading();
+						completeFunction.call();
+						close();
+					}
+				);
+				if( security != null ){
+					securityController.addOperations(security.id,array);
+				} else if (security == null && group != null && doc != null){
+					securityController.create(doc.id,group.id,array);
+				}
+			}
+			
+			protected function cancleBtn_clickHandler(event:MouseEvent):void
+			{
+				close();
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<s:HGroup width="90%" horizontalAlign="left" height="10%">
+			<s:TextArea borderVisible="false" width="100%" height="100%" enabled="false" text="{group.name}  对  {doc.alias}  的操作权限："/>
+		</s:HGroup>
+		<s:BorderContainer width="90%" height="75%">
+			<mx:DataGrid width="100%" height="100%" dataProvider="{operationsDP}">
+				<mx:columns>
+					<mx:DataGridColumn width="60" dataField="name" headerText="名称"/>
+					<mx:DataGridColumn dataField="description" headerText="描述"/>
+					<mx:DataGridColumn width="120" headerText="允许"
+									   itemRenderer="view.itemrenderer.OperationPermissionItemRenderer"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</s:BorderContainer>
+		<s:HGroup width="90%" height="5%" horizontalAlign="right">
+			<s:Button id="submitBtn" icon="{Images.submit_button}" label="确定" click="submitBtn_clickHandler(event)"/>
+			<s:Button id="cancleBtn" icon="{Images.cancle_button}" label="取消" click="cancleBtn_clickHandler(event)"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:TitleWindow>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			  xmlns:s="library://ns.adobe.com/flex/spark"
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  xmlns:ns="http://code.google.com/p/flexlib/" title="文件上传"
+			  x="120" y="100" width="800" height="480" close="close()"
+			  creationComplete="init()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import flexlib.containers.DockableToolBar;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import myevent.MyEvent;
+			
+			import services.DocumentController;
+			
+			import valueObjects.Document;
+			
+			
+			[Bindable]
+			private var selectedFiles:ArrayCollection = new ArrayCollection([]);
+			private var unableUpLoadFiles:ArrayCollection;
+			private var prepareUpLoadFiles:ArrayCollection;
+//			private var fileRefList:FileReferenceList;
+			private var fileRef:FileReference;
+			public var refreshFunction:Function;
+			
+			protected function browseBtn_clickHandler(event:MouseEvent):void
+			{
+//				fileRefList = new FileReferenceList();
+				fileRef = new FileReference();
+				fileRef.addEventListener(Event.SELECT,fileSelectComplete);
+				fileRef.browse( [
+					new FileFilter("文档 （*.doc，*.xls，*.ppt，*.pdf）","*.doc;*.xls;*.ppt;*.pdf"),
+					new FileFilter("图片 （*.png，*.gif，*.jpg）","*.png;*.gif;*.jpg")
+				]);				
+			}
+			
+			//用户选择完文件后，处理函数
+			protected function fileSelectComplete(event:Event):void
+			{
+				unableUpLoadFiles = new ArrayCollection();
+				if ( fileRef.size > 1024 * 1024 * 1024 ){
+					unableUpLoadFiles.addItem(fileRef);
+				} else {
+					var documentController:DocumentController = new DocumentController();
+					documentController.addEventListener(FaultEvent.FAULT,faultHandler);
+					documentController.addEventListener(ResultEvent.RESULT,
+						function(e:ResultEvent):void{
+							var flag:Boolean = e.result as Boolean;
+							if (flag){
+								Alert.show("无法上传，该目录下已存在同名文件！");
+							}  else {
+								selectedFiles.addItem(fileRef);
+							}
+						}
+					);
+					documentController.existName(Constant.folder == null ? '' : Constant.folder.id,fileRef.name);
+					
+				}
+//				for each(var fileRef:FileReference in fileRefList.fileList){
+//					for each(var obj:Object in selectedFiles){
+//						if(obj.name == fileRef.name){
+//							selectedFiles.removeItemAt(selectedFiles.getItemIndex(obj));
+//						}
+//					}
+//					if ( fileRef.size > 100 * 1024 * 1024 ){
+//						unableUpLoadFiles.addItem(fileRef);
+//					} else {
+//						selectedFiles.addItem(fileRef);
+//					}
+//				}
+				if ( unableUpLoadFiles.length > 0 ) {
+					var name:String = "";
+					for each(var tmp:Object in unableUpLoadFiles){
+						name += tmp.name + "\n";
+					}
+					Alert.show("以下文件大小超过1GB限制：\n" + name + "\n 请尝试将文件大小控制在1GB以内。");
+				}
+				if( selectedFiles.length > 0 ){
+					uploadBtn.enabled = true;
+					clearBtn.enabled = true;
+					Alert.show("是否立即开始上传？","提示",Alert.YES|Alert.NO,null,
+						function(eee:CloseEvent):void{
+							if(eee.detail == 1)
+								fileRef.load();
+						}
+					);
+				}
+			}
+			
+			protected function uploadBtn_clickHandler(event:MouseEvent):void
+			{
+				uploadBtn.enabled = false;
+				clearBtn.enabled = false;
+				prepareUpLoadFiles = new ArrayCollection();
+				prepareUpLoadFiles.addAll(selectedFiles.list);
+				if ( prepareUpLoadFiles.length > 0 ) {
+					var fileRef:FileReference = prepareUpLoadFiles.getItemAt(0) as FileReference;
+					fileRef.load();
+				}				
+			}
+			
+			protected function clearBtn_clickHandler(event:MouseEvent):void
+			{
+				selectedFiles = new ArrayCollection();					
+			}
+			
+			protected function close():void
+			{
+				Util.removePop(this);
+			}
+			
+			//继续上传
+			public function continueUpload(event:MyEvent):void{
+				if( prepareUpLoadFiles.length > 1 ){
+					prepareUpLoadFiles.removeItemAt(0);
+					var fileRef:FileReference = prepareUpLoadFiles.getItemAt(0) as FileReference;
+					fileRef.load();
+				} else {
+					close();
+					refreshFunction.call();
+				}
+			}
+			
+			protected function init():void
+			{
+				this.addEventListener(MyEvent.CONTINUE_UPLOAD_NEXT,continueUpload);				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<s:HGroup width="100%" height="10%" verticalAlign="middle">
+			<mx:LinkButton id="browseBtn" width="50" height="100%" icon="{Images.open_toolbar}" toolTip="浏览本地文件" 
+						   label="浏览" labelPlacement="bottom" click="browseBtn_clickHandler(event)"/>
+			<mx:VRule height="100%"/>
+			<mx:LinkButton id="uploadBtn" width="50" height="100%" icon="{Images.upload_toolbar}" toolTip="批量上传"
+						enabled="{selectedFiles.length > 0}"   label="上传" labelPlacement="bottom" click="uploadBtn_clickHandler(event)"/>
+			<mx:LinkButton id="clearBtn" width="50" height="100%" icon="{Images.refresh_toolbar}" toolTip="清空列表"
+						   enabled="{selectedFiles.length > 0}"   label="清空" labelPlacement="bottom" click="clearBtn_clickHandler(event)"/>
+		</s:HGroup>
+		<mx:DataGrid id="fileListDG" width="100%" height="80%" dataProvider="{selectedFiles}">
+			<mx:columns>
+				<mx:DataGridColumn minWidth="160" dataField="name" headerText="名称"/>
+				<mx:DataGridColumn width="50" dataField="type" headerText="类型" />
+				<mx:DataGridColumn width="150" dataField="size" headerText="大小" itemRenderer="view.itemrenderer.DocumentSizeItemRenderer"/>
+				<mx:DataGridColumn minWidth="240" headerText="上传进度" itemRenderer="view.itemrenderer.DocumentUploadProgressItemRenderer"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<s:HGroup width="100%" height="10%" horizontalAlign="right" verticalAlign="middle">
+			<s:Button id="cancleBtn" label="关闭" icon="{Images.cancle_button}" click="close()"/>
+		</s:HGroup>
+	</s:VGroup>
+</s:TitleWindow>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:ns="http://code.google.com/p/flexlib/"
+				   width="100%" height="100%" backgroundImage="{Images.main_background}"
+				   backgroundImageFillMode="scale" borderVisible="false" creationComplete="init()">
+	<fx:Script source="../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import flexlib.mdi.containers.MDIWindow;
+			
+			import global.Constant;
+			
+			import services.PrivilegeController;
+			
+			import valueObjects.Privilege;
+			import valueObjects.User;
+			
+			import view.window.mydocument.MyDocument;
+			import view.window.recycle.Recycle;
+			import view.window.sysconfig.SysConfig;
+			import view.window.usergroup.UserGroup;
+			[Bindable]
+			public var authDocument:Boolean = true;
+			[Bindable]
+			public var authShared:Boolean = true;
+			[Bindable]
+			public var authGroup:Boolean = true;
+			[Bindable]
+			public var authRecytle:Boolean = true;
+			
+			public var loginOut:Function;
+			
+			//返回登录
+			protected function logoutIcon_doubleClickHandler(event:MouseEvent):void
+			{
+				loginOut.call();
+			}
+			
+			//双击 我的文档
+			protected function documentIcon_doubleClickHandler(event:MouseEvent):void
+			{
+				var document:MyDocument = new MyDocument();
+				openWindow(document);
+			}
+			
+			private function openWindow(window:MDIWindow):void{
+				desktopContainer.windowManager.add(window);
+			}
+			
+			protected function sysSetting_doubleClickHandler(event:MouseEvent):void
+			{
+				var config:SysConfig = new SysConfig();
+				openWindow(config);
+				
+			}
+			
+			protected function userGroup_doubleClickHandler(event:MouseEvent):void
+			{
+				var group:UserGroup = new UserGroup();
+				openWindow(group);
+			}
+			
+			protected function recycleBin_doubleClickHandler(event:MouseEvent):void
+			{
+				var recycle:Recycle = new Recycle();
+				openWindow(recycle);
+			}
+			
+			public function init():void
+			{
+				Constant.canvas = desktopContainer;
+				checkPrivilege();				
+			}
+			
+			protected function checkPrivilege():void{
+				var user:User = Constant.user;
+				var privilegeController:PrivilegeController = new PrivilegeController();
+				privilegeController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						enable(e.result as ArrayCollection);
+					}
+				);
+				privilegeController.addEventListener(FaultEvent.FAULT,faultHandler);
+				privilegeController.getPrivilegesByUser(user.id);
+			}
+			
+
+			
+			protected function enable(privileges:ArrayCollection):void{
+				for each(var privilege:Privilege in privileges){
+					switch(privilege.name)
+					{
+						case "文档管理":
+						{
+							Constant.authMyDocument = true;
+							break;
+						}
+						case "新建":
+						{
+							Constant.authCreateBtn = true;
+							break;
+						}
+						case "上传":
+						{
+							Constant.authUploadBtn = true;
+							break;
+						}
+						case "回收站":
+						{
+							Constant.authRecycle = true;
+							break;
+						}
+						case "用户权限":
+						{
+							Constant.authUserGroup = true;
+							break;
+						}
+						case "系统设置":
+						{
+							Constant.authSysConfig= true;
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<ns:MDICanvas id="desktopContainer" width="100%" height="100%">
+		<s:Group width="100%" height="100%">
+			
+			<mx:LinkButton id="documentIcon" visible="{Constant.authMyDocument}" x="{this.width/4}"
+							   y="{this.height/2 - 168}" z="50" label="文档管理"
+							   doubleClick="documentIcon_doubleClickHandler(event)"
+							   doubleClickEnabled="{Constant.authMyDocument}"
+							   icon="{Images.my_document_icon}" labelPlacement="bottom"
+							   toolTip="双击打开"/>
+			
+			<mx:LinkButton visible="{Constant.authUserGroup}" id="userGroup" 
+						   z="50" label="用户权限" x="{this.width/4}" y="{this.height/2}"
+						   doubleClick="userGroup_doubleClickHandler(event)"
+						   doubleClickEnabled="{Constant.authUserGroup}" icon="{Images.user_group_icon}"
+						   labelPlacement="bottom" toolTip="双击打开"/>
+			
+			<mx:LinkButton  id="sysSetting" x="{this.width/4 + 256}" y="{this.height/2}"
+						   z="50" label="系统设置" visible="{Constant.authSysConfig}"
+						   doubleClick="sysSetting_doubleClickHandler(event)"
+						   doubleClickEnabled="{Constant.authSysConfig}" icon="{Images.sys_setting_icon}"
+						   labelPlacement="bottom" toolTip="双击打开"/>
+			
+			 <mx:LinkButton visible="{Constant.authRecycle}" id="recycleBin" x="{this.width/4 + 512}" y="{this.height/2}"
+						   doubleClickEnabled="{Constant.authRecycle}" doubleClick="recycleBin_doubleClickHandler(event)"
+						   z="50" label="回收站" icon="{Images.recycle_bin_icon}"
+						   labelPlacement="bottom" toolTip="双击打开"/>
+			
+				<mx:LinkButton id="logoutIcon" x="{this.width/4 + 768}" y="{this.height/2}"
+							   z="50" label="返回登陆"
+							   doubleClick="logoutIcon_doubleClickHandler(event)"
+							   doubleClickEnabled="true" icon="{Images.logout_icon}"
+							   labelPlacement="bottom" toolTip="双击打开"/>
+		</s:Group>
+	</ns:MDICanvas>
+</s:BorderContainer>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:services="services.*"
+			   width="640" height="480" close="close()"
+			   title="{currGroup.name}">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import global.Constant;
+			
+			import services.DepartmentController;
+			import services.GroupController;
+			import services.PrivilegeController;
+			import services.RoleController;
+			
+			import valueObjects.Group;
+			import valueObjects.Privilege;
+			
+			[Bindable]
+			public var currGroup:Group;
+			
+			public var refreshFunction:Function;
+			
+			protected function refresnCurrentGroup():void{
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(event:ResultEvent):void{
+						currGroup = event.result as Group;
+					}
+				);
+				groupController.getById(currGroup.id);
+			}
+			
+			//添加部门
+			protected function addDeptBtn_clickHandler(event:MouseEvent):void
+			{
+				var deptTree:DeptSelectTree = new DeptSelectTree();
+				deptTree._group= currGroup;
+				deptTree.refreshFunction = refresnCurrentGroup;
+				PopUpManager.addPopUp(deptTree,this);
+				PopUpManager.centerPopUp(deptTree);
+			}
+			
+			//移除部门
+			protected function removeDeptBtn_clickHandler(event:MouseEvent):void
+			{
+				Constant.addLoading(this);
+				var item:Object = departmentDG.selectedItem;
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						currGroup = e.result as Group;
+						Constant.removeLoading();
+					}
+				);
+				groupController.removeDepartment(currGroup.id,item.id);
+			}
+			
+			//添加角色
+			protected function addRoleBtn_clickHandler(event:MouseEvent):void
+			{
+				var roleSelected:RoleSelected = new RoleSelected();
+				roleSelected._group = currGroup;
+				roleSelected.refreshFunction = refresnCurrentGroup;
+				PopUpManager.addPopUp(roleSelected,this);
+				PopUpManager.centerPopUp(roleSelected);
+			}
+			
+			protected function removeRoleBtn_clickHandler(event:MouseEvent):void
+			{
+				Constant.addLoading(this);
+				var item:Object = roleDG.selectedItem;
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						currGroup = e.result as Group;
+						Constant.removeLoading();
+					}
+				);
+				groupController.removeRole(currGroup.id,item.id);
+			}
+			
+			protected function addPrivilegeBtn_clickHandler(event:MouseEvent):void
+			{
+				var priviegeSelected:PrivilegeSelected = new PrivilegeSelected();
+				priviegeSelected._group = currGroup;
+				priviegeSelected.refreshFunction = refresnCurrentGroup;
+				PopUpManager.addPopUp(priviegeSelected,this);
+				PopUpManager.centerPopUp(priviegeSelected);
+			}
+			
+			protected function removePrivilegeBtn_clickHandler(event:MouseEvent):void
+			{
+				Constant.addLoading(this);
+				var item:Privilege = privilegeDG.selectedItem as Privilege;
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						currGroup = e.result as Group;
+						Constant.removeLoading();
+					}
+				);
+				groupController.removePrivilege(currGroup.id,item.id);
+			}
+			
+			protected function close():void
+			{
+				PopUpManager.removePopUp(this);	
+				refreshFunction.call();
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:TabNavigator width="100%" height="100%">
+		<s:NavigatorContent id="roleContent" width="100%" height="100%"
+							label="{currGroup.name} 包含的角色">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="90%" height="10%" horizontalAlign="left">
+					<s:Button id="addRoleBtn" label="添加角色" click="addRoleBtn_clickHandler(event)"
+							  icon="{Images.add_toolbar}"/>
+					<s:Button id="removeRoleBtn" label="移除角色"
+							  click="removeRoleBtn_clickHandler(event)"
+							  enabled="{roleDG.selectedItem != null}" icon="{Images.delete_toolbar}"/>
+				</s:HGroup>
+				<mx:DataGrid id="roleDG" width="90%" height="70%" dataProvider="{currGroup.roles}">
+					<mx:columns>
+						<mx:DataGridColumn dataField="name" headerText="角色"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:HGroup width="90%" height="10%" horizontalAlign="right">
+					<s:Button icon="{Images.cancle_button}" label="关闭" click="close()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="{currGroup.name} 包含的部门">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="90%" height="10%" horizontalAlign="left">
+					<s:Button id="addDeptBtn" label="添加部门" click="addDeptBtn_clickHandler(event)"
+							  icon="{Images.add_toolbar}"/>
+					<s:Button id="removeDeptBtn" label="移除部门"
+							  click="removeDeptBtn_clickHandler(event)"
+							  enabled="{departmentDG.selectedItem != null}"
+							  icon="{Images.delete_toolbar}"/>
+				</s:HGroup>
+				<mx:DataGrid id="departmentDG" width="90%" height="70%" dataProvider="{currGroup.departments}">
+					<mx:columns>
+						<mx:DataGridColumn dataField="name" headerText="部门"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:HGroup width="90%" height="10%" horizontalAlign="right">
+					<s:Button icon="{Images.cancle_button}" label="关闭" click="close()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="{currGroup.name} 拥有的权限">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="90%" height="10%" horizontalAlign="left">
+					<s:Button id="addPrivilegeBtn" label="添加权限"
+							  click="addPrivilegeBtn_clickHandler(event)"
+							  icon="{Images.add_toolbar}"/>
+					<s:Button id="removePrivilegeBtn" label="移除权限"
+							  click="removePrivilegeBtn_clickHandler(event)"
+							  enabled="{privilegeDG.selectedItem != null}"
+							  icon="{Images.delete_toolbar}"/>
+				</s:HGroup>
+				<mx:DataGrid id="privilegeDG" width="90%" height="70%" dataProvider="{currGroup.privileges}">
+					<mx:columns>
+						<mx:DataGridColumn dataField="description" headerText="权限"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:HGroup width="90%" height="10%" horizontalAlign="right">
+					<s:Button icon="{Images.cancle_button}" label="关闭" click="close()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+	</mx:TabNavigator>
+</s:TitleWindow>

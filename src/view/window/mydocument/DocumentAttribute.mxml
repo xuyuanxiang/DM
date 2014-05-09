@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="640" height="580" close="close()"
+			   creationComplete="init()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectProxy;
+			
+			import assets.Images;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import myevent.MyEvent;
+			
+			import services.DocumentController;
+			import services.GroupController;
+			import services.LogController;
+			import services.SecurityController;
+			import services.VersionController;
+			
+			import valueObjects.Document;
+			import valueObjects.Group;
+			import valueObjects.Page;
+			import valueObjects.Security;
+			[Bindable]
+			public var _selectedIndex:Number;
+			[Bindable]
+			public var currDoc:Document;
+			[Bindable]
+			public var currGroup:Group;
+			[Bindable]
+			public var currSecurity:valueObjects.Security;
+			[Bindable]
+			public var _editable:Boolean;
+			[Bindable]
+			public var allGroups:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public var securityOperations:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var pageNo:Number;
+			[Bindable]
+			public var pageSize:Number;
+			[Bindable]
+			public var rowCount:Number;
+			[Bindable]
+			public var totalPage:Number;
+			[Bindable]
+			private var logDP:ArrayCollection = new ArrayCollection();
+			
+			public var refreshFunction:Function;
+			
+			protected function init():void
+			{
+					this.title = currDoc.alias;
+					_editable = false;
+					getGroups();
+			}
+			
+			protected function getSecurity():void{
+				securityOperations = new ArrayCollection();
+				var securityController:SecurityController = new SecurityController();
+				securityController.addEventListener(FaultEvent.FAULT,faultHandler);
+				securityController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						currSecurity = e.result as valueObjects.Security;
+						if(currSecurity != null)
+							securityOperations = currSecurity.operations as ArrayCollection;
+						Constant.removeLoading();
+					}
+				);
+				securityController.getByDocumentAndGroup(currDoc.id,currGroup.id);
+			}
+			
+			protected function getGroups():void{
+				allGroups = new ArrayCollection();
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						allGroups = e.result as ArrayCollection;
+					}
+				);
+				groupController.getAll();
+			}
+			
+			protected function addOperationBtn_clickHandler(event:MouseEvent):void
+			{
+				var add:AddOperation = new AddOperation();
+				add.security = currSecurity;
+				add.group = currGroup;
+				add.doc = currDoc;
+				add.completeFunction = function():void{
+					groupDG_itemClickHandler();
+				};
+				PopUpManager.addPopUp(add,this);
+				PopUpManager.centerPopUp(add);
+			}
+			
+			protected function groupDG_itemClickHandler():void
+			{
+				Constant.addLoading(this.parent);
+				currGroup = groupDG.selectedItem as Group;
+				if(currGroup.id != null){
+					getSecurity();
+				}
+			}
+			
+			protected function close():void
+			{
+				if(refreshFunction != null)
+					refreshFunction.call();
+				Util.removePop(this);				
+			}
+			
+			protected function getLogs(_pageNo:Number,_pageSize:Number):void{
+				Constant.addLoading(this.parent);
+				var logController:LogController = new LogController();
+				logController.addEventListener(FaultEvent.FAULT,faultHandler);
+				logController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void {
+						Constant.removeLoading();
+						assignment(e.result as Page);
+					}
+				);
+				logController.getLogsByDocument(currDoc.id,_pageNo,_pageSize);
+			}
+			
+			protected function assignment(page:Page):void{
+				this.pageNo = page.pageNo;
+				this.pageSize = page.pageSize;
+				this.rowCount = page.rowCount;
+				this.totalPage = page.totalPage;
+				this.logDP = page.list;
+				enableBtn();
+			}
+			
+			protected function enableBtn():void
+			{
+				prevBtn.enabled = pageNo > 1;
+				nextBtn.enabled = pageNo < totalPage;
+			}
+			
+			protected function prevBtn_clickHandler(event:MouseEvent):void
+			{
+				getLogs(pageNo-1,pageSize);
+			}
+			
+			protected function nextBtn_clickHandler(event:MouseEvent):void
+			{
+				getLogs(pageNo+1,pageSize);
+			}
+			
+			protected function logDG_creationCompleteHandler(event:FlexEvent):void
+			{
+				getLogs(1,15);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<s:DateTimeFormatter id="dateFormatter" locale="zh-CN"/>
+	</fx:Declarations>
+	<mx:TabNavigator id="myTab" width="100%" height="100%" selectedIndex="{_selectedIndex}">
+		<s:NavigatorContent width="100%" height="100%" label="详细">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:BorderContainer width="90%" height="80%">
+					<s:Form width="100%">
+						<s:FormItem width="80" label="名称： ">
+							<s:TextInput id="docName" width="100%" editable="false"
+										 text="{currDoc.alias}"/>
+						</s:FormItem>
+						<s:FormItem width="80" label="类型： ">
+							<s:Label id="docType" width="100%" text="{currDoc.type}"/>
+						</s:FormItem>
+						<s:FormItem width="80" label="大小： ">
+							<s:Label id="docSize" width="100%" text="{currDoc.size} Bytes"/>
+						</s:FormItem>
+						<s:FormItem width="80" label="所有者： ">
+							<s:Label id="docOwner" width="100%" text="{currDoc.owner.name}"/>
+						</s:FormItem>
+						<s:FormItem width="80" label="创建时间： ">
+							<s:Label id="docCreated" width="100%"
+									 text="{dateFormatter.format(currDoc.created)}"/>
+						</s:FormItem>
+						<s:FormItem width="80" label="修改时间： ">
+							<s:Label id="docModified" width="100%"
+									 text="{dateFormatter.format(currDoc.lastModified)}"/>
+						</s:FormItem>
+					</s:Form>
+				</s:BorderContainer>
+				<s:HGroup width="90%" height="10%" horizontalAlign="right">
+					<s:Button label="返回" icon="{Images.cancle_button}" click="this.close()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="安全">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="90%" height="5%" horizontalAlign="left">
+					<s:Label text="对象名称： {currDoc.alias}"/>
+				</s:HGroup>
+				<s:BorderContainer width="90%" height="35%">
+					<mx:DataGrid id="groupDG" width="100%" height="100%" dataProvider="{allGroups}"
+								 itemClick="groupDG_itemClickHandler()">
+						<mx:columns>
+							<mx:DataGridColumn width="120" dataField="name" headerText="用户组"/>
+							<mx:DataGridColumn dataField="description" headerText="描述"/>
+						</mx:columns>
+					</mx:DataGrid>
+				</s:BorderContainer>
+				<s:BorderContainer width="90%" height="45%">
+					<s:VGroup width="100%" height="100%" gap="8" horizontalAlign="center"
+							  verticalAlign="middle">
+						<s:HGroup width="95%" horizontalAlign="left" paddingTop="6">
+							<s:Label text="{currGroup == null? '' : currGroup.name + ' 的权限：'}"/>
+						</s:HGroup>
+						<s:HGroup width="95%" horizontalAlign="left">
+							<s:Button id="addOperationBtn" label="设置"
+									  click="addOperationBtn_clickHandler(event)"
+									  enabled="{groupDG.selectedItem != null}"
+									  icon="{Images.gear_toolbar}"/>
+						</s:HGroup>
+						<mx:DataGrid id="operationDG" width="95%" height="100%"
+									 dataProvider="{securityOperations}">
+							<mx:columns>
+								<mx:DataGridColumn width="80" dataField="name" headerText="操作权限"/>
+								<mx:DataGridColumn dataField="description" headerText="权限说明"/>
+							</mx:columns>
+						</mx:DataGrid>
+					</s:VGroup>
+				</s:BorderContainer>
+				<s:HGroup width="90%" height="5%" horizontalAlign="right">
+					<s:Button label="返回" icon="{Images.cancle_button}" click="this.close()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="日志">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<s:HGroup width="90%" height="8%">
+					<s:Label text="对象名称： {currDoc.alias}"/>
+					<s:HGroup width="100%" height="100%" horizontalAlign="right" verticalAlign="middle">
+						<s:Label text="第{pageNo}页，共{totalPage}页。"/>
+						<s:Button label="上一页" id="prevBtn" click="prevBtn_clickHandler(event)"/>
+						<s:Button label="下一页" id="nextBtn" click="nextBtn_clickHandler(event)"/>
+					</s:HGroup>
+				</s:HGroup>
+				<mx:DataGrid id="logDG" width="90%" height="77%" dataProvider="{logDP}" creationComplete="logDG_creationCompleteHandler(event)">
+					<mx:columns>
+						<mx:DataGridColumn width="160" dataField="created" headerText="日期" 
+										   itemRenderer="view.itemrenderer.CreatedDateItemRender"/>
+						<mx:DataGridColumn width="60" dataTipField="user.name" dataField="user.name" headerText="用户"/>
+						<mx:DataGridColumn width="120" dataTipField="user.defaultDepartment.name" dataField="user.defaultDepartment.name" headerText="部门"/>
+						<mx:DataGridColumn dataTipField="details" dataField="details" headerText="操作详情"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:HGroup width="90%" height="5%" horizontalAlign="right">
+					<s:Button label="返回" icon="{Images.cancle_button}" click="this.close()"/>
+				</s:HGroup>
+			</s:VGroup>
+		</s:NavigatorContent>
+	</mx:TabNavigator>
+</s:TitleWindow>

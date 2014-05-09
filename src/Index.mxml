@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:ns="http://code.google.com/p/flexlib/"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:login="view.login.*"
+			   xmlns:view="view.*"
+			   xmlns:desktop="view.desktop.*"
+			   minWidth="955" minHeight="600" fontFamily="微软雅黑" fontSize="13">
+	<fx:Script source="view/common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import global.Constant;
+			import global.Util;
+			
+			import services.PrivilegeController;
+			
+			import valueObjects.Privilege;
+			import valueObjects.User;
+			
+			import view.desktop.Desktop;
+			import view.login.LoginView;
+			
+			protected function loginSuccess():void{
+				container.selectedIndex = 1;
+				if(desktop != null)
+					desktop.init();
+			}
+			
+			protected function loginOut():void{
+				container.selectedIndex = 0;
+				disable();
+			}
+			
+			protected function disable():void{
+				Constant.authCreateBtn = false;
+				Constant.authMyDocument = false;
+				Constant.authRecycle = false;
+				Constant.authSysConfig = false;
+				Constant.authUploadBtn = false;
+				Constant.authUserGroup = false;
+			}
+		
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<mx:ViewStack id="container" width="100%" height="100%" creationComplete="init()">
+		<s:NavigatorContent width="100%" height="100%">
+			<login:LoginView id="login" width="100%" height="100%"
+							 loginCompleteFunction="loginSuccess"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%">
+			<desktop:Desktop id="desktop" width="100%" height="100%" loginOut="loginOut"/>
+		</s:NavigatorContent>
+	</mx:ViewStack>
+</s:Application>

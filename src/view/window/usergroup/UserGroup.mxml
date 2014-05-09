@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns:MDIWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			  xmlns:s="library://ns.adobe.com/flex/spark"
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  xmlns:ns="http://code.google.com/p/flexlib/"
+			  width="540" height="480" layout="absolute"
+			  x="120" y="20" creationComplete="init()">
+	<fx:Script source="../../common.as"/>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import assets.Images;
+			
+			import global.Util;
+			
+			import services.GroupController;
+			
+			import valueObjects.Group;
+			[Bindable]
+			public var groupDP:ArrayCollection = new ArrayCollection();
+			
+			
+			protected function configBtn_clickHandler(event:MouseEvent):void
+			{
+				var config:ConfigGroup = new ConfigGroup();
+				config.currGroup = groupDG.selectedItem as Group;
+				config.refreshFunction = init;
+				Util.addPop(config,this.parent);
+			}
+			
+			protected function createBtn_clickHandler(event:MouseEvent):void
+			{
+				var edit:EditGroup = new EditGroup();
+				edit.refresnFunction = init;
+				Util.addPop(edit,this.parent);
+			}
+			
+			protected function editBtn_clickHandler(event:MouseEvent):void
+			{
+				var edit:EditGroup = new EditGroup();
+				edit.group = groupDG.selectedItem as Group;
+				edit.refresnFunction = init;
+				Util.addPop(edit,this.parent);				
+			}
+			
+			protected function enableBtn_clickHandler(event:MouseEvent):void
+			{
+				var group:Group = groupDG.selectedItem as Group;
+				enableOrDisable(group.id);
+			}
+			
+			protected function disableBtn_clickHandler(event:MouseEvent):void
+			{
+				var group:Group = groupDG.selectedItem as Group;
+				enableOrDisable(group.id);
+			}
+			
+			protected function enableOrDisable(id:String):void{
+				Constant.addLoading(this.parent);
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						init();
+					}
+				);
+				groupController.enableOrDisableGroup(id);
+			}
+			
+			protected function init():void
+			{
+				enableBtn.enabled = false;
+				disableBtn.enabled = false;
+				Constant.addLoading(this);
+				var groupController:GroupController = new GroupController();
+				groupController.addEventListener(FaultEvent.FAULT,faultHandler);
+				groupController.addEventListener(ResultEvent.RESULT,
+					function(e:ResultEvent):void{
+						Constant.removeLoading();
+						groupDP = e.result as ArrayCollection;
+					}
+				);
+				groupController.getAll();
+			}
+			
+			
+			protected function groupDG_itemClickHandler(event:ListEvent):void
+			{
+				var group:Group = groupDG.selectedItem as Group;
+				disableBtn.enabled = group.enable;
+				enableBtn.enabled = !group.enable;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<s:HGroup width="100%" height="10%" verticalAlign="middle">
+			<mx:LinkButton id="createBtn" width="52" height="100%" label="新建" labelPlacement="bottom" 
+						   icon="{Images.add_toolbar}"
+						   click="createBtn_clickHandler(event)"/>
+			<mx:LinkButton id="editBtn" width="52" height="100%" label="修改" labelPlacement="bottom" 
+						   icon="{Images.tool_toolbar}" enabled="{groupDG.selectedItem != null}"
+						   click="editBtn_clickHandler(event)"/>
+			<mx:LinkButton id="configBtn" width="52" height="100%" label="设置" labelPlacement="bottom" 
+						   icon="{Images.gear_toolbar}" enabled="{groupDG.selectedItem != null}"
+						   click="configBtn_clickHandler(event)"/>
+			<mx:LinkButton  id="enableBtn" width="52" height="100%" label="激活" labelPlacement="bottom"
+						   icon="{Images.enable_toolbar}" enabled="false"
+						   click="enableBtn_clickHandler(event)"/>
+			<mx:LinkButton  id="disableBtn" width="52" height="100%" label="注销" labelPlacement="bottom"
+						   icon="{Images.disable_toolbar}" enabled="false"
+						   click="disableBtn_clickHandler(event)"/>
+		</s:HGroup>
+		<mx:DataGrid id="groupDG" width="100%" height="90%" dataProvider="{groupDP}" itemClick="groupDG_itemClickHandler(event)">
+			<mx:columns>
+				<mx:DataGridColumn width="60" headerText="状态" dataField="enable" 
+								   itemRenderer="view.itemrenderer.SysConfigEnableItemRenderer"/>
+				<mx:DataGridColumn width="120" headerText="名称" dataField="name"/>
+				<mx:DataGridColumn headerText="描述" dataField="description"/>
+			</mx:columns>
+		</mx:DataGrid>
+	</s:VGroup>
+</ns:MDIWindow>
